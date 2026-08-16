@@ -42,7 +42,6 @@ jobs:
 =======
           local-dir: dist/
           server-dir: /public_html/
-          cleanup: true
 
       # Deploy to demo (demo branch → demo.uthutho.co.za)
       - name: Deploy to Demo via FTP
@@ -56,5 +55,8 @@ jobs:
           port: ${{ secrets.DEMO_FTP_PORT }}
           local-dir: dist/
           server-dir: /demo.uthutho.co.za/
+<<<<<<< HEAD
           cleanup: true
 >>>>>>> 9087f4c (feat: add GitHub Actions workflow for automated FTP deployment to production and demo environments)
+=======
+>>>>>>> 916a1c6 (feat: add GitHub Actions workflow for automated FTP deployment to production and demo environments)
