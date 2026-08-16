@@ -35,6 +35,26 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
           port: ${{ secrets.FTP_PORT }}
+<<<<<<< HEAD
           local-dir: dist/  # This is your build directory
           server-dir: public_html/  # Change this if needed
           cleanup: true  # Remove old files before uploading
+=======
+          local-dir: dist/
+          server-dir: /public_html/
+          cleanup: true
+
+      # Deploy to demo (demo branch → demo.uthutho.co.za)
+      - name: Deploy to Demo via FTP
+        if: github.ref == 'refs/heads/demo'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.DEMO_FTP_SERVER }}
+          username: ${{ secrets.DEMO_FTP_USERNAME }}
+          password: ${{ secrets.DEMO_FTP_PASSWORD }}
+          protocol: ftp
+          port: ${{ secrets.DEMO_FTP_PORT }}
+          local-dir: dist/
+          server-dir: /demo.uthutho.co.za/
+          cleanup: true
+>>>>>>> 9087f4c (feat: add GitHub Actions workflow for automated FTP deployment to production and demo environments)
