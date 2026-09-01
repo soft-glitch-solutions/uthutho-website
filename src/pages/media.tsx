@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -396,492 +397,266 @@ import {
   Mic,
   ChevronDown,
 } from 'lucide-react';
+=======
+import React from 'react';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+>>>>>>> 8113749 (Media page commit)
 
-import Navbar from '@/components/home/Navbar';
-import Footer from '@/components/home/Footer';
+const MediaPage: React.FC = () => {
+  const colors = [
+    { name: 'Primary', hex: '#1ea2b1', className: 'bg-primary', usage: 'Buttons, links, key UI elements' },
+    { name: 'Secondary', hex: '#ed67b1', className: 'bg-secondary', usage: 'Highlights, accents, icons' },
+    { name: 'Accent', hex: '#f8c325', className: 'bg-accent', usage: 'Warnings, notifications, energy' },
+    { name: 'Highlight', hex: '#fd602d', className: 'bg-highlight', usage: 'Calls-to-action, important alerts' },
+  ];
 
-const TEAL = '#1ea2b1';
-const ORANGE = '#f18f01';
-const PINK = '#e151af';
+  const downloadPdf = async () => {
+    const input = document.getElementById('media-page');
+    if (!input) return;
 
-/* ============================================================
-   MOTION PRIMITIVES — Google Labs + Apple + Samsung hybrid
-   ============================================================ */
-
-// Samsung One UI basic path interpolator
-const ONE_UI_EASE = [0.22, 0.25, 0.0, 1.0] as const;
-
-const SPRING: Transition = {
-  type: 'spring',
-  stiffness: 260,
-  damping: 30,
-  mass: 0.9,
-};
-
-const SOFT_SPRING: Transition = {
-  type: 'spring',
-  stiffness: 120,
-  damping: 22,
-  mass: 1,
-};
-
-// Samsung-style snappy transition
-const ONE_UI_TRANSITION: Transition = {
-  duration: 0.35,
-  ease: ONE_UI_EASE,
-};
-
-const rise: Variants = {
-  hidden: { opacity: 0, y: 16, filter: 'blur(6px)' },
-  visible: {
-    opacity: 1,
-    y: 0,
-    filter: 'blur(0px)',
-    transition: { ...SPRING },
-  },
-};
-
-const riseLg: Variants = {
-  hidden: { opacity: 0, y: 28, filter: 'blur(8px)' },
-  visible: {
-    opacity: 1,
-    y: 0,
-    filter: 'blur(0px)',
-    transition: { ...SOFT_SPRING },
-  },
-};
-
-const scaleIn: Variants = {
-  hidden: { opacity: 0, scale: 0.96, y: 12, filter: 'blur(5px)' },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    filter: 'blur(0px)',
-    transition: { ...SPRING },
-  },
-};
-
-const stagger = (gap = 0.07, delay = 0): Variants => ({
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: gap, delayChildren: delay },
-  },
-});
-
-const viewportOnce = { once: true, amount: 0.2 } as const;
-
-/* ============================================================
-   MAGNETIC CARD
-   ============================================================ */
-
-const MagneticCard: React.FC<{
-  children: React.ReactNode;
-  className?: string;
-  strength?: number;
-}> = ({ children, className, strength = 8 }) => {
-  const prefersReduced = useReducedMotion();
-  const ref = useRef<HTMLDivElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const sx = useSpring(x, { stiffness: 200, damping: 20 });
-  const sy = useSpring(y, { stiffness: 200, damping: 20 });
-
-  const onMove = (e: React.MouseEvent) => {
-    if (prefersReduced || !ref.current) return;
-    const r = ref.current.getBoundingClientRect();
-    const cx = r.left + r.width / 2;
-    const cy = r.top + r.height / 2;
-    x.set(((e.clientX - cx) / r.width) * strength * 2);
-    y.set(((e.clientY - cy) / r.height) * strength * 2);
-  };
-  const onLeave = () => {
-    x.set(0);
-    y.set(0);
+    try {
+      // Show loading state (you can add a loading spinner UI)
+      const canvas = await html2canvas(input, {
+        backgroundColor: '#000000',
+        scale: 2,
+        logging: false,
+        allowTaint: false,
+        useCORS: true,
+        windowWidth: 1200, // Fixed width for consistency
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'px',
+        format: [canvas.width * 0.75, canvas.height * 0.75]
+      });
+      
+      pdf.setFillColor(0, 0, 0);
+      pdf.rect(0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight(), 'F');
+      
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+      pdf.save('uthutho-brand-guide.pdf');
+    } catch (error) {
+      console.error('PDF generation failed:', error);
+    }
   };
 
   return (
-    <motion.div
-      ref={ref}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-      style={{ x: sx, y: sy }}
-      className={className}
+    <div 
+      id="media-page" 
+      className="min-h-screen bg-black text-white"
     >
-      {children}
-    </motion.div>
-  );
-};
-
-/* ============================================================
-   SCENE HEADER — Apple-style per-word reveal
-   ============================================================ */
-
-const SceneHeader: React.FC<{
-  eyebrow?: string;
-  title: string;
-  accentWord?: string;
-  accentColor?: string;
-  description?: string;
-}> = ({ eyebrow, title, accentWord, accentColor = TEAL, description }) => {
-  const prefersReduced = useReducedMotion();
-  const words = title.split(' ');
-
-  return (
-    <div className="relative z-10 max-w-4xl text-center mx-auto mb-10 sm:mb-16">
-      {eyebrow && (
-        <motion.span
-          initial={prefersReduced ? false : { opacity: 0, y: 8 }}
-          whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
-          viewport={viewportOnce}
-          transition={ONE_UI_TRANSITION}
-          className="block text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground mb-2 sm:mb-3"
-        >
-          {eyebrow}
-        </motion.span>
-      )}
-
-      <motion.h2
-        initial={prefersReduced ? false : 'hidden'}
-        whileInView={prefersReduced ? undefined : 'visible'}
-        viewport={viewportOnce}
-        variants={stagger(0.045)}
-        className="font-display text-3xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-foreground"
-      >
-        {words.map((word, i) => (
-          <motion.span
-            key={`${word}-${i}`}
-            variants={{
-              hidden: { opacity: 0, y: 18, filter: 'blur(5px)' },
-              visible: {
-                opacity: 1,
-                y: 0,
-                filter: 'blur(0px)',
-                transition: { ...SPRING },
-              },
-            }}
-            className="inline-block mr-[0.25em]"
-          >
-            {word}
-          </motion.span>
-        ))}
-        {accentWord && (
-          <>
-            {' '}
-            <motion.span
-              variants={{
-                hidden: { opacity: 0, y: 18, filter: 'blur(5px)' },
-                visible: {
-                  opacity: 1,
-                  y: 0,
-                  filter: 'blur(0px)',
-                  transition: { ...SPRING },
-                },
-              }}
-              className="relative inline-block"
-              style={{ color: accentColor }}
+      {/* Simple Header */}
+      <div className="border-b border-gray-800">
+        <div className="container mx-auto px-6 py-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-light tracking-tight mb-2">
+                Uthutho Brand Kit
+              </h1>
+              <p className="text-gray-400 text-sm">
+                Everything you need for consistent brand representation
+              </p>
+            </div>
+            <button
+              onClick={downloadPdf}
+              className="bg-primary text-black px-6 py-3 rounded text-sm font-medium hover:bg-opacity-90 transition-colors inline-flex items-center justify-center gap-2 w-full md:w-auto"
             >
-              {accentWord}
-              <motion.span
-                aria-hidden
-                initial={prefersReduced ? false : { scaleX: 0 }}
-                whileInView={prefersReduced ? undefined : { scaleX: 1 }}
-                viewport={viewportOnce}
-                transition={{ ...SPRING, delay: 0.35 }}
-                className="absolute -bottom-1 left-0 right-0 h-[6px] rounded-full bg-black opacity-90 origin-left"
-              />
-            </motion.span>
-          </>
-        )}
-      </motion.h2>
-
-      {description && (
-        <motion.p
-          initial={prefersReduced ? false : { opacity: 0, y: 12 }}
-          whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
-          viewport={viewportOnce}
-          transition={{ ...SPRING, delay: 0.15 }}
-          className="mt-4 sm:mt-5 text-sm sm:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto"
-        >
-          {description}
-        </motion.p>
-      )}
-    </div>
-  );
-};
-
-/* ============================================================
-   REAL PRESS ARTICLES (verified from search)
-   ============================================================ */
-
-interface PressArticle {
-  id: string;
-  outlet: string;
-  title: string;
-  excerpt: string;
-  url: string;
-  date: string;
-  tag: 'Feature' | 'Interview' | 'Award' | 'Podcast';
-  tagColor: string;
-}
-
-const PRESS_ARTICLES: PressArticle[] = [
-  {
-    id: 'openletter',
-    outlet: 'The Open Letter',
-    title: 'This local app turns taxi commuters into a live GPS network',
-    excerpt:
-      "Uthutho is a community-powered public transport app that gives commuters real-time visibility on taxis without needing a single operator to opt in. Commuters mark themselves as waiting at a stop, and when someone on the same route starts moving, GPS broadcasts their progress to everyone waiting. The app is live on the Play Store with around 300 users, primarily university students in Cape Town .",
-    url: 'https://theopenletter.io/p/uthutho-taxi-tracking',
-    date: 'Jun 2026',
-    tag: 'Feature',
-    tagColor: TEAL,
-  },
-  {
-    id: 'uwc',
-    outlet: 'University of the Western Cape',
-    title: 'UWC Alumni Take Homegrown Transport App From Local Commutes to Global Stage',
-    excerpt:
-      'Two UWC alumni are taking their homegrown tech invention to the world stage after Uthutho won the 2026 Red Bull Basement South Africa national title. Software developers Shaqeel Less and Makhi Mangxola, alumni of the UWC Future Innovation Lab, are set to jet off to Silicon Valley in June where they will showcase the app alongside other top young innovators from around the world .',
-    url: 'https://www.uwc.ac.za/news-and-announcements/news/uwc-alumni-take-homegrown-transport-app-from-local-commutes-to-global-stage',
-    date: 'Apr 2026',
-    tag: 'Feature',
-    tagColor: ORANGE,
-  },
-  {
-    id: 'news24',
-    outlet: 'News24',
-    title: "PODCAST | These Cape Town innovators want to fix SA's terrible daily commute",
-    excerpt:
-      "In Episode 13 of The Odds in Our Favour, Saskia Falken chats to Shaqeel Less about Uthutho: a platform designed to bring visibility, safety and real-time information to commuters. The spark for Uthutho began with a poignant question: why does something that so many rely on work the way it does? For UWC graduates Less and co-founder Makhi Mangxola, that frustration became the starting point .",
-    url: 'https://www.news24.com/southafrica/good-news/podcast-these-cape-town-innovators-want-to-fix-sas-terrible-daily-commute-20260605-0292',
-    date: 'Jun 2026',
-    tag: 'Podcast',
-    tagColor: PINK,
-  },
-  {
-    id: 'redbull',
-    outlet: 'Red Bull',
-    title: 'Red Bull Basement Crowns its South African 2026 winner',
-    excerpt:
-      "Shaqeel Less and Makhi Mangxola from Uthutho claimed the title with its digital platform that organizes public transport information across taxis, buses and trains into one accessible app for everyday urban commuters. \"It's a strong, impactful idea with real potential to scale across South Africa and even globally,\" noted judge Mixo Ngoveni .",
-    url: 'https://www.redbull.com/za-en/red-bull-basement-south-africa-2026-winner',
-    date: 'Mar 2026',
-    tag: 'Award',
-    tagColor: ORANGE,
-  },
-  {
-    id: 'hypertext',
-    outlet: 'Hypertext',
-    title: 'Public transport platform crowned national champion at Red Bull Basement 2026',
-    excerpt:
-      "The winning team, Shaqeel Less and Makhi Mangxola from Uthutho, claimed the spot thanks to a digital platform that organises public transport information across taxis, buses, and trains into one app for everyday urban commuters. They will compete for $100,000 in equity-free funding at the World Finals in San Francisco from 1–3 June .",
-    url: 'https://htxt.co.za/2026/03/public-transport-platform-crowned-national-champion-at-red-bull-basement-2026/',
-    date: 'Mar 2026',
-    tag: 'Feature',
-    tagColor: TEAL,
-  },
-  {
-    id: 'weekendargus',
-    outlet: 'Weekend Argus',
-    title: "Meet the UWC graduates revolutionising South Africa's public transport with Uthutho",
-    excerpt:
-      "In a definitive triumph for homegrown innovation, two UWC alumni are set to represent South Africa on the global stage after Uthutho secured the 2026 Red Bull Basement national title. The app offers commuters live journey updates and community-verified information that significantly reduces waiting times and enhances personal safety, with school transport tracking also built in .",
-    url: 'https://weekendargus.co.za/2026-04-17-meet-the-uwc-graduates-revolutionising-south-africas-public-transport-with-uthutho/',
-    date: 'Apr 2026',
-    tag: 'Feature',
-    tagColor: PINK,
-  },
-  {
-    id: 'startupmag',
-    outlet: 'StartUp Magazine South Africa',
-    title: "From Local Commute to Silicon Valley: Uthutho Crowned South Africa's Red Bull Basement Champion",
-    excerpt:
-      "Uthutho isn't just another app; it's a digital ecosystem designed to solve the fragmented reality of South African public transport. By integrating taxis, buses, and trains into a single, community-powered interface, the platform provides commuters with real-time data on routes and availability .",
-    url: 'https://startupmag.co.za/2026/03/from-local-commute-to-silicon-valley-uthutho-crowned-south-africas-red-bull-basement-champion/',
-    date: 'Mar 2026',
-    tag: 'Feature',
-    tagColor: TEAL,
-  },
-  {
-    id: 'startupmag-interview',
-    outlet: 'StartUp Magazine South Africa',
-    title: 'Shaqeel Less & Makhi Mangxola on Uthutho and Winning Red Bull Basement 2026',
-    excerpt:
-      "Join Shaqeel Less & Makhi Mangxola as they take us through their journey with Uthutho and reveal what it took to become Red Bull Basement South Africa 2026 National Champions. They share how their idea—using AI to organize public transport information and improve daily mobility—was born from a desire to solve real-world problems .",
-    url: 'https://startupmag.co.za/2026/04/shaqeel-less-makhi-mangxola-on-uthutho-and-winning-red-bull-basement-south-africa-2026/',
-    date: 'Apr 2026',
-    tag: 'Interview',
-    tagColor: PINK,
-  },
-];
-
-/* ============================================================
-   APPLE-STYLE STICKY SCROLL SECTION
-   Pinned headline that fades FAST as you scroll
-   ============================================================ */
-
-const AppleScrollSection: React.FC = () => {
-  const prefersReduced = useReducedMotion();
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end'],
-  });
-
-  // Fade out FAST — gone by ~35% of the scroll, then fully invisible.
-  const headlineOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.05, 0.25, 0.35],
-    [1, 1, 0.15, 0]
-  );
-  const headlineScale = useTransform(
-    scrollYProgress,
-    [0, 0.05, 0.35],
-    [1, 1, 0.9]
-  );
-  const headlineY = useTransform(
-    scrollYProgress,
-    [0, 0.05, 0.35],
-    [0, 0, -40]
-  );
-
-  return (
-    <div ref={containerRef} className="relative">
-      {/* Sticky Apple-style headline — fades fast on scroll */}
-      <div className="sticky top-0 h-screen flex items-center justify-center pointer-events-none z-10">
-        <motion.div
-          style={
-            prefersReduced
-              ? undefined
-              : {
-                  opacity: headlineOpacity,
-                  scale: headlineScale,
-                  y: headlineY,
-                }
-          }
-          className="text-center px-4"
-        >
-          <motion.p
-            initial={prefersReduced ? false : { opacity: 0, y: 20 }}
-            animate={prefersReduced ? undefined : { opacity: 1, y: 0 }}
-            transition={{ ...SOFT_SPRING, delay: 0.2 }}
-            className="text-[11px] font-bold uppercase tracking-[0.25em] mb-4"
-            style={{ color: TEAL }}
-          >
-            Featured Coverage
-          </motion.p>
-          <motion.h2
-            initial={prefersReduced ? false : { opacity: 0, y: 30 }}
-            animate={prefersReduced ? undefined : { opacity: 1, y: 0 }}
-            transition={{ ...SOFT_SPRING, delay: 0.35 }}
-            className="font-display text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground leading-[1.05]"
-          >
-            In the
-            <span
-              className="relative inline-block mx-2"
-              style={{ color: TEAL }}
-            >
-              press
-              <motion.span
-                aria-hidden
-                initial={prefersReduced ? false : { scaleX: 0 }}
-                animate={prefersReduced ? undefined : { scaleX: 1 }}
-                transition={{ ...SOFT_SPRING, delay: 0.6 }}
-                className="absolute -bottom-2 left-0 right-0 h-[8px] rounded-full origin-left"
-                style={{ backgroundColor: TEAL }}
-              />
-            </span>
-          </motion.h2>
-          <motion.div
-            initial={prefersReduced ? false : { opacity: 0 }}
-            animate={prefersReduced ? undefined : { opacity: 1 }}
-            transition={{ delay: 1.2 }}
-            className="mt-8 flex justify-center"
-          >
-            <ChevronDown className="size-6 text-muted-foreground animate-bounce" />
-          </motion.div>
-        </motion.div>
+              <span>↓</span>
+              Download Brand Guide (PDF)
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* Cards scroll over the sticky headline */}
-      <div className="relative z-20 -mt-[100vh] pt-[100vh]">
-        <div className="mx-auto w-full max-w-6xl px-4 pb-16 sm:px-6">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {PRESS_ARTICLES.map((article, i) => (
-              <motion.div
-                key={article.id}
-                initial={
-                  prefersReduced
-                    ? false
-                    : { opacity: 0, y: 40, scale: 0.95 }
-                }
-                whileInView={
-                  prefersReduced
-                    ? undefined
-                    : { opacity: 1, y: 0, scale: 1 }
-                }
-                viewport={{ once: true, amount: 0.15 }}
-                transition={{
-                  ...SPRING,
-                  delay: (i % 3) * 0.08,
-                }}
-              >
-                <MagneticCard className="h-full rounded-[1.75rem] bg-card border border-border/60 shadow-xl p-3 flex flex-col">
-                  <div className="flex items-center justify-between px-3 pt-3 pb-2">
-                    <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
-                      {article.outlet}
-                    </span>
-                    <span
-                      className="text-[10px] font-bold uppercase tracking-wider rounded-full px-2 py-0.5"
-                      style={{
-                        backgroundColor: `${article.tagColor}15`,
-                        color: article.tagColor,
-                      }}
-                    >
-                      {article.tag}
-                    </span>
-                  </div>
+      <div className="container mx-auto px-6 py-8">
+        {/* Logo Section - Simple and Clean */}
+        <div className="mb-12">
+          <h2 className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-4">Logo</h2>
+          <div className="bg-gray-900 rounded-lg p-8">
+            <div className="flex flex-col md:flex-row items-start gap-8">
+              <div className="bg-gray-800 p-8 rounded-lg flex items-center justify-center w-full md:w-auto">
+                <img 
+                  src="/lovable-uploads/e9056cae-b62d-4515-aae1-ac0e16261d24.png" 
+                  alt="Uthutho Logo" 
+                  className="h-16 w-auto"
+                />
+              </div>
+              <div className="space-y-3">
+                <p className="text-gray-300 text-sm leading-relaxed max-w-xl">
+                  Our logo represents connection and movement. Always maintain clear space around it equal to the height of the 'U'.
+                </p>
+                <div className="flex gap-3">
+                  <a href="#" className="text-primary text-sm hover:underline">Download PNG →</a>
+                  <a href="#" className="text-gray-400 text-sm hover:underline">Download SVG →</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-                  <div className="px-3">
-                    <h3 className="font-display text-lg font-extrabold tracking-tight text-foreground leading-snug">
-                      {article.title}
-                    </h3>
-                  </div>
-
-                  <div className="px-3 pt-3 flex-1">
-                    <p className="text-sm leading-relaxed text-muted-foreground font-medium line-clamp-5">
-                      {article.excerpt}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between px-3 pt-4 pb-3 mt-auto">
-                    <span className="text-[11px] text-muted-foreground">
-                      {article.date}
-                    </span>
-                    <a
-                      href={article.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group inline-flex items-center gap-1 text-sm font-semibold transition-colors hover:opacity-80"
-                      style={{ color: TEAL }}
-                    >
-                      Read article
-                      <ExternalLink className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                    </a>
-                  </div>
-                </MagneticCard>
-              </motion.div>
+        {/* Colors - Simple Grid */}
+        <div className="mb-12">
+          <h2 className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-4">Colors</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {colors.map((color) => (
+              <div key={color.name} className="bg-gray-900 rounded-lg overflow-hidden">
+                <div className={`h-24 ${color.className}`} />
+                <div className="p-4">
+                  <p className="font-medium text-sm">{color.name}</p>
+                  <p className="text-gray-400 text-xs mt-1">{color.hex}</p>
+                  <p className="text-gray-500 text-xs mt-2">{color.usage}</p>
+                </div>
+              </div>
             ))}
           </div>
         </div>
+<<<<<<< HEAD
 >>>>>>> b4726a8 (Some changes i feel like we should go with)
+=======
+
+        {/* Typography - Clean Examples */}
+        <div className="mb-12">
+          <h2 className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-4">Typography</h2>
+          <div className="bg-gray-900 rounded-lg p-6">
+            <div className="space-y-6">
+              <div>
+                <p className="text-xs text-gray-500 mb-2">HEADING — QUAPIO</p>
+                <p className="text-3xl font-bold">Uthutho Commute</p>
+                <p className="text-3xl font-bold mt-1">Making travel simpler</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 mb-2">SUBHEADING — PLAYFAIR</p>
+                <p className="text-xl font-serif">Smart commuting for everyone</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 mb-2">BODY — INTER</p>
+                <p className="text-sm text-gray-300 max-w-2xl">
+                  Uthutho provides real-time public transport information to help communities navigate their daily commute with confidence.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Email Signature - Practical Example */}
+        <div className="mb-12">
+          <h2 className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-4">Email Signature</h2>
+          <div className="bg-gray-900 rounded-lg p-6">
+            <p className="text-xs text-gray-500 mb-4">Copy this template for your email signature:</p>
+            
+            {/* Email Signature Example */}
+            <div className="border-l-4 border-primary pl-4 py-2 bg-gray-800 rounded-r-lg">
+              <div className="flex items-start gap-4">
+                <img 
+                  src="/lovable-uploads/e9056cae-b62d-4515-aae1-ac0e16261d24.png" 
+                  alt="Uthutho" 
+                  className="h-8 w-auto"
+                />
+                <div className="text-sm">
+                  <p className="font-bold">Your Name</p>
+                  <p className="text-primary text-xs">Job Title</p>
+                  <p className="text-gray-400 text-xs mt-2">✉︎ your.name@uthutho.com</p>
+                  <p className="text-gray-400 text-xs">✆ +27 123 456 789</p>
+                  <p className="text-gray-500 text-xs mt-2">www.uthutho.com • Cape Town</p>
+                </div>
+              </div>
+            </div>
+
+            {/* HTML Code */}
+            <div className="mt-6">
+              <p className="text-xs text-gray-500 mb-2">HTML template:</p>
+              <pre className="bg-gray-800 p-4 rounded text-xs text-gray-300 overflow-x-auto">
+{`<table style="font-family: Inter, sans-serif;">
+  <tr>
+    <td><img src="logo-url.png" height="32"></td>
+    <td style="padding-left: 16px;">
+      <strong>Your Name</strong><br>
+      <span style="color: #1ea2b1;">Job Title</span><br>
+      <span style="color: #666;">your.name@uthutho.com</span>
+    </td>
+  </tr>
+</table>`}
+              </pre>
+            </div>
+          </div>
+        </div>
+
+        {/* Brand Voice - Simple Guidelines */}
+        <div className="mb-12">
+          <h2 className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-4">Brand Voice</h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-gray-900 rounded-lg p-6">
+              <p className="text-xs text-gray-500 mb-3">DO</p>
+              <ul className="space-y-2 text-sm text-gray-300">
+                <li>✓ Be clear and straightforward</li>
+                <li>✓ Use inclusive language</li>
+                <li>✓ Focus on solutions</li>
+                <li>✓ Keep it professional but warm</li>
+              </ul>
+            </div>
+            <div className="bg-gray-900 rounded-lg p-6">
+              <p className="text-xs text-gray-500 mb-3">DON'T</p>
+              <ul className="space-y-2 text-sm text-gray-300">
+                <li>✗ Use jargon or technical terms</li>
+                <li>✗ Be overly casual</li>
+                <li>✗ Make promises we can't keep</li>
+                <li>✗ Ignore accessibility</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Social Media Assets */}
+        <div className="mb-12">
+          <h2 className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-4">Social Assets</h2>
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="bg-gray-900 rounded-lg p-4">
+              <p className="text-xs text-gray-500 mb-2">Profile Picture</p>
+              <div className="bg-gray-800 w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center">
+                <img src="/lovable-uploads/e9056cae-b62d-4515-aae1-ac0e16261d24.png" alt="Logo" className="h-8 w-auto" />
+              </div>
+              <a href="#" className="text-primary text-xs block text-center">Download →</a>
+            </div>
+            <div className="bg-gray-900 rounded-lg p-4">
+              <p className="text-xs text-gray-500 mb-2">Cover Photo</p>
+              <div className="bg-gray-800 w-full h-16 rounded mb-3 flex items-center justify-center text-gray-600 text-xs">
+                1500 x 500px
+              </div>
+              <a href="#" className="text-primary text-xs block text-center">Download →</a>
+            </div>
+            <div className="bg-gray-900 rounded-lg p-4">
+              <p className="text-xs text-gray-500 mb-2">Favicon</p>
+              <div className="bg-gray-800 w-12 h-12 rounded mx-auto mb-3 flex items-center justify-center">
+                <span className="text-primary font-bold">U</span>
+              </div>
+              <a href="#" className="text-primary text-xs block text-center">Download →</a>
+            </div>
+          </div>
+        </div>
+
+        {/* Contact */}
+        <div className="border-t border-gray-800 pt-8 mt-12">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center text-sm">
+            <div>
+              <p className="text-gray-400">Questions? Contact our brand team:</p>
+              <p className="text-primary mt-1">brand@uthutho.com</p>
+            </div>
+            <p className="text-gray-600 text-xs mt-4 md:mt-0">© 2024 Uthutho • Version 1.0</p>
+          </div>
+        </div>
+>>>>>>> 8113749 (Media page commit)
       </div>
     </div>
   );
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 export default App;
 =======
@@ -1184,3 +959,6 @@ const MediaPage: React.FC = () => {
 
 export default MediaPage;
 >>>>>>> b4726a8 (Some changes i feel like we should go with)
+=======
+export default App;
+>>>>>>> 8113749 (Media page commit)
