@@ -4,13 +4,13 @@ const AwardsSection: React.FC = () => {
   return (
     <section className="py-16 md:py-24 bg-gradient-to-t from-black via-black/95 to-primary/20">
       <div className="container px-4 mx-auto">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-6xl mx-auto text-center">
           <p className="text-secondary tracking-[2px] text-sm font-bold">AWARDS & RECOGNITION</p>
           <h2 className="text-3xl font-light text-white sm:text-4xl xl:text-5xl mt-4 mb-12">
             Recognized for Innovation
           </h2>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-3 gap-8">
             <a 
               href="/blog/redbull-basement-2026" 
               target="_blank" 
@@ -52,6 +52,26 @@ const AwardsSection: React.FC = () => {
                 </p>
                 <p className="mt-4 text-gray-400">
                   We are proud to have won the Pitch Den award at Africa Tech Week, a testament to our commitment to revolutionizing transport in Africa.
+                </p>
+              </div>
+            </div>
+            <div 
+              className="block p-8 rounded-2xl bg-muted-darker/50 backdrop-blur-sm border border-glass hover:border-secondary/50 transition-all duration-300 transform hover:-translate-y-2 h-full"
+            >
+              <div className="flex flex-col items-center text-center">
+                <img 
+                  className="h-28 mx-auto"
+                  src="/lovable-uploads/ncic.png" 
+                  alt="NCIC Gauteng Smart Mobility Cleantech Challenge" 
+                />
+                <h3 className="mt-8 text-2xl md:text-3xl font-bold text-secondary">
+                  Gauteng Smart Mobility Cleantech Challenge
+                </h3>
+                <p className="mt-2 text-lg text-white">
+                  Winners
+                </p>
+                <p className="mt-4 text-gray-400">
+                  We were honored to win the Gauteng Smart Mobility Cleantech Challenge, a program by NCIC, recognizing our efforts in creating a sustainable and smart transport solution.
                 </p>
               </div>
             </div>
