@@ -65,7 +65,7 @@ const AwardsSection: React.FC = () => {
                   alt="NCIC Gauteng Smart Mobility Cleantech Challenge" 
                 />
                 <h3 className="mt-8 text-2xl md:text-3xl font-bold text-secondary">
-                  Gauteng Smart Mobility Cleantech Challenge
+                  NCIC Gauteng Smart Mobility 
                 </h3>
                 <p className="mt-2 text-lg text-white">
                   Winners
