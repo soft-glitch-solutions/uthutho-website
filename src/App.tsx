@@ -44,6 +44,13 @@ import LearnMore from "./pages/LearnMore";
 import MediaPage from "./pages/media";
 import RedbullArticle from "./pages/RedbullArticle";
 import AboutUsPage from "./pages/AboutUsPage";
+import FeaturesPage from "./pages/FeaturesPage";
+import ContactPage from "./pages/ContactPage";
+import FlowPage from '@/pages/FlowPage';
+import PartnersPage from '@/pages/PartnersPage';
+import FeedbackPage from '@/pages/FeedbackPage';
+import RateUsPage from '@/pages/RateUsPage';
+
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -61,6 +68,7 @@ const mockProfileProps = {
 };
 
 import { useState } from "react";
+import SuggestStopPage from "./pages/SuggestStopPage";
 
 const App = () => {
   const [theme, setTheme] = useState("light");
@@ -85,13 +93,21 @@ const App = () => {
               <Route path="/confirm-delete" element={<ConfirmDeleteAccount />} />
               <Route path="/docs" element={<DocsPage />} />
               <Route path="/docs/:docId" element={<DocDetailPage />} />
+              <Route path="/features" element={<FeaturesPage />} />
               <Route path="/blog" element={<BlogsPublicPage />} />
               <Route path="/blog/redbull-basement-2026" element={<RedbullArticle />} />
               <Route path="/blog/:blogId" element={<BlogDetailPublicPage />} />
               <Route path="/media" element={<MediaPage />} />
               <Route path="/about-us" element={<AboutUsPage />} />
               <Route path="/admin" element={<AdminLogin />} />
-              
+              <Route path="/contact" element={<ContactPage/>} />
+              <Route path="/flow" element={<FlowPage />} />
+              <Route path="/partners" element={<PartnersPage />} />
+              <Route path="/Suggest" element={<SuggestStopPage />} />
+              <Route path="/feedback" element={<FeedbackPage />} />
+<Route path="/ratings" element={<RateUsPage />} />
+
+
               {/* Admin dashboard layout with nested routes */}
               <Route path="/admin/dashboard" element={<AdminDashboard />}>
                 <Route index element={<Overview />} />
