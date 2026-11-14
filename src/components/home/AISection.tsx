@@ -1,63 +1,102 @@
-import { motion } from "framer-motion";
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Building2, ArrowRight, ShieldCheck, TrendingUp, Users } from 'lucide-react';
+import ScrollScene from './ScrollScene';
+import SceneHeader from './SceneHeader';
 
-const AISection = () => {
+const PartnersSection: React.FC = () => {
+  const prefersReduced = 
+    typeof window !== 'undefined' 
+    ? window.matchMedia('(prefers-reduced-motion: reduce)').matches 
+    : false;
+
+  const cardVariants = (i: number) => ({
+    hidden: { opacity: 0, y: 40 },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { duration: 0.7, delay: i * 0.15, ease: [0.22, 1, 0.36, 1] } 
+    },
+  });
+
+  const partnerCards = [
+    {
+      icon: <TrendingUp className="h-8 w-8 text-brand-green" />,
+      title: "Commuter Intelligence",
+      description: "Gain insights into how your employees and customers travel to inform better business and operational decisions.",
+    },
+    {
+      icon: <Users className="h-8 w-8 text-brand-green" />,
+      title: "Community Engagement",
+      description: "Connect with a growing community of commuters and transport stakeholders to build brand trust and social impact.",
+    },
+    {
+      icon: <ShieldCheck className="h-8 w-8 text-brand-green" />,
+      title: "Safety & ESG Solutions",
+      description: "Align your organisation with tangible safety and sustainability outcomes by supporting data-driven transport initiatives.",
+    },
+     {
+      icon: <Building2 className="h-8 w-8 text-brand-green" />,
+      title: "Platform for Growth",
+      description: "Leverage a purpose-built platform to build new services, research, and data models for the future of African mobility.",
+    },
+  ];
+
   return (
-    <section className="py-20 bg-gray-900 text-white">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold">The Future of Paratransit is Here</h2>
-          <p className="text-lg text-gray-400 mt-2">
-            Uthutho is at the forefront of revolutionizing paratransit systems across the Global South.
-          </p>
+    <ScrollScene
+      id="partners"
+      bg="bg-secondary/60"
+      trackHeight="h-auto min-h-screen lg:h-[130vh]"
+      ghostText="PARTNERS"
+    >
+      <div className="mx-auto w-full max-w-6xl lg:max-w-7xl px-4 py-16 sm:px-6 sm:py-20">
+        <SceneHeader
+          eyebrow="ORGANISATIONAL PARTNERS"
+          title="Data for a Better"
+          accentWord="Tomorrow"
+          accentColor="text-brand-green"
+          description="Uthutho partners with employers, transport operators, and public sector organisations to build a safer, more efficient, and data-driven transport ecosystem."
+        />
+
+        <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {partnerCards.map((card, i) => (
+            <motion.div
+              key={card.title}
+              custom={i}
+              initial={prefersReduced ? false : 'hidden'}
+              whileInView={prefersReduced ? undefined : 'visible'}
+              viewport={{ once: true, amount: 0.3 }}
+              variants={cardVariants(i)}
+              className="rounded-[1.75rem] bg-card border border-border/60 shadow-xl p-6 flex flex-col h-full"
+            >
+                <div className="flex-shrink-0 mb-4">{card.icon}</div>
+                <div className="flex-grow">
+                    <h3 className="text-lg font-bold">{card.title}</h3>
+                    <p className="text-muted-foreground mt-2 text-sm">{card.description}</p>
+                </div>
+            </motion.div>
+          ))}
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="bg-gray-800 p-8 rounded-lg"
+        <motion.div 
+            className="mt-12 text-center"
+            initial={prefersReduced ? false : { opacity: 0, y: 20 }}
+            whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <a 
+            href="/contact-us"
+            className="group inline-flex items-center rounded-full bg-brand-green px-6 py-3 text-lg font-semibold text-background transition-colors hover:bg-brand-green/80"
           >
-            <h3 className="text-2xl font-bold mb-4">Phase 1: Data Collection</h3>
-            <p className="text-gray-400">
-              We are actively mapping paratransit networks, starting with key regions and expanding globally.
-            </p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-gray-800 p-8 rounded-lg"
-          >
-            <h3 className="text-2xl font-bold mb-4">Phase 2: Real-time Analytics</h3>
-            <p className="text-gray-400">
-              Our platform will provide live insights into passenger demand, traffic patterns, and vehicle availability.
-            </p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="bg-gray-800 p-8 rounded-lg"
-          >
-            <h3 className="text-2xl font-bold mb-4">Phase 3: AI-Powered Optimization</h3>
-            <p className="text-gray-400">
-              Leveraging artificial intelligence to create dynamic, efficient, and sustainable paratransit for all.
-            </p>
-          </motion.div>
-        </div>
-
-        <div className="text-center mt-12">
-          <a
-            href="/blog"
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition-colors"
-          >
-            Learn More About Our Vision
+            Partner With Us
+            <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
           </a>
-        </div>
+        </motion.div>
+
       </div>
-    </section>
+    </ScrollScene>
   );
 };
 
-export default AISection;
+export default PartnersSection;
