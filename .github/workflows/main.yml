@@ -52,3 +52,4 @@ jobs:
           port: ${{ secrets.FTP_PORT }}
           local-dir: dist/
           server-dir: /demo.uthutho.co.za/
+          dangerous-clean-slate: true
