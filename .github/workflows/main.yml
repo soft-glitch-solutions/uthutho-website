@@ -1,10 +1,11 @@
+
 name: Deploy via FTP
 
 on:
   push:
     branches:
-      - main  # Deploy when pushing to the main branch
-      - demo  # Deploy when pushing to the demo branch
+      - main
+      - demo
 
 jobs:
   deploy:
@@ -12,12 +13,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'  # Updated from 16 to 20 to match required engines
+          node-version: '20'
 
       - name: Install dependencies
         run: npm install
@@ -25,7 +26,7 @@ jobs:
       - name: Build the app
         run: npm run build
 
-      # Deploy to production (main branch → uthutho.co.za)
+      # Production deployment: main branch
       - name: Deploy to Production via FTP
         if: github.ref == 'refs/heads/main'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -35,15 +36,11 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
           port: ${{ secrets.FTP_PORT }}
-<<<<<<< HEAD
-          local-dir: dist/  # This is your build directory
-          server-dir: public_html/  # Change this if needed
-          cleanup: true  # Remove old files before uploading
-=======
           local-dir: dist/
           server-dir: /public_html/
+          dangerous-clean-slate: true
 
-      # Deploy to demo (demo branch → demo.uthutho.co.za)
+      # Demo deployment: demo branch
       - name: Deploy to Demo via FTP
         if: github.ref == 'refs/heads/demo'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -55,8 +52,3 @@ jobs:
           port: ${{ secrets.FTP_PORT }}
           local-dir: dist/
           server-dir: /demo.uthutho.co.za/
-<<<<<<< HEAD
-          cleanup: true
->>>>>>> 9087f4c (feat: add GitHub Actions workflow for automated FTP deployment to production and demo environments)
-=======
->>>>>>> 916a1c6 (feat: add GitHub Actions workflow for automated FTP deployment to production and demo environments)
