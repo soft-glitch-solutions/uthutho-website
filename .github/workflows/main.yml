@@ -26,8 +26,8 @@ jobs:
       - name: Build the app
         run: npm run build
 
-      # Production deployment: main branch
-      - name: Deploy to Production via FTP
+      # Production deployment
+      - name: Deploy to Production
         if: github.ref == 'refs/heads/main'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
@@ -37,11 +37,11 @@ jobs:
           protocol: ftp
           port: ${{ secrets.FTP_PORT }}
           local-dir: dist/
-          server-dir: /public_html/
-          dangerous-clean-slate: true
+          server-dir: public_html/
+          log-level: verbose
 
-      # Demo deployment: demo branch
-      - name: Deploy to Demo via FTP
+      # Demo deployment
+      - name: Deploy to Demo
         if: github.ref == 'refs/heads/demo'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
@@ -51,5 +51,5 @@ jobs:
           protocol: ftp
           port: ${{ secrets.FTP_PORT }}
           local-dir: dist/
-          server-dir: /demo.uthutho.co.za/
-          dangerous-clean-slate: true
+          server-dir: demo.uthutho.co.za/
+          log-level: verbose
