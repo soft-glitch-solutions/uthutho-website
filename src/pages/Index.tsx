@@ -148,18 +148,6 @@ const MagneticCard: React.FC<{
    SCENE HEADER
    ============================================================ */
 
-<<<<<<< HEAD
-      <JourneyDrive />
-      
-      <FeaturesSection />
-      
-      <GoalsSection />
-      <AwardsSection />
-      {/* Added new Timeline section */}
-      <Timeline />
-      
-      <TeamSection />
-=======
 const SceneHeader: React.FC<{
   eyebrow?: string;
   title: string;
@@ -813,7 +801,6 @@ const GpsWaitingVisual: React.FC<{ color: string; animate: boolean }> = ({
     </div>
   </div>
 );
->>>>>>> b4726a8 (Some changes i feel like we should go with)
 
 /**
  * Step 2 graphic: two nodes with a moving dot travelling between them
