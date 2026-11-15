@@ -263,8 +263,9 @@ const PARTNERS: PartnerLogo[] = [
     shortName: 'GCIP-SA',
     description:
       'A UNIDO and TIA programme funded by the Global Environment Facility. Uthutho was recognised within this ecosystem for cleantech-aligned mobility innovation.',
+    // Note: Google encrypted images block hotlinking. Save it locally if it breaks.
     logoUrl:
-      'https://gcip.tia.org.za/wp-content/uploads/2017/11/GCIP-SA-Commemorative-Book-2014-2017.pdf',
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4qvPTyjU2a4Ebc2141vbkRrIxmq0O9qDW-_jDMtFYVw&s=10',
     accent: TEAL,
     category: 'Programme',
   },
@@ -284,7 +285,7 @@ const PARTNERS: PartnerLogo[] = [
     shortName: 'TIA',
     description:
       "TIA is the South African government agency that stimulates and intensifies technological innovation. TIA's mandate is to use science and technology to develop new industries and create sustainable jobs.",
-    logoUrl: 'https://www.tia.org.za',
+    logoUrl: 'https://www.tia.org.za/storage/2023/12/tia-logo-1.png',
     accent: PINK,
     category: 'Partner',
   },
@@ -294,7 +295,7 @@ const PARTNERS: PartnerLogo[] = [
     shortName: 'Tshimologong',
     description:
       "A Wits University-owned digital innovation hub in Braamfontein, Johannesburg. Tshimologong incubates startups, commercialises research, and grows Africa's digital skills pipeline.",
-    logoUrl: 'https://tshimologong.joburg',
+    logoUrl: 'https://tshimologong.joburg/wp-content/uploads/2021/08/tshimologong-dark-logo.svg',
     accent: TEAL,
     category: 'Partner',
   },
@@ -304,7 +305,7 @@ const PARTNERS: PartnerLogo[] = [
     shortName: 'DSTI',
     description:
       "The South African government department responsible for driving research, science, and innovation. DSTI oversees TIA and funds programmes that turn research into commercial products.",
-    logoUrl: 'https://www.dsti.gov.za',
+    logoUrl: 'https://kascphsjbbdmimgncrbn.supabase.co/storage/v1/object/public/media/science-technology_-and-innovation.jpg',
     accent: ORANGE,
     category: 'Partner',
   },
@@ -464,16 +465,16 @@ const PartnersPage: React.FC = () => {
                   }}
                 >
                   <MagneticCard className="h-full rounded-[1.75rem] bg-card border border-border/60 shadow-xl p-3 flex flex-col">
-                    {/* Logo panel */}
+                    {/* Logo panel — added bg-white/95 so dark logos don't disappear on dark cards */}
                     <div
-                      className="relative w-full h-44 rounded-[1.25rem] flex items-center justify-center p-6 overflow-hidden"
+                      className="relative w-full h-44 rounded-[1.25rem] flex items-center justify-center p-6 overflow-hidden bg-white/95"
                       style={{
-                        background: `radial-gradient(circle at 50% 50%, ${partner.accent}10, transparent 70%)`,
+                        background: partner.logoUrl ? undefined : `radial-gradient(circle at 50% 50%, ${partner.accent}10, transparent 70%)`,
                       }}
                     >
                       {/* Category badge */}
                       <span
-                        className="absolute top-3 right-3 text-[10px] font-bold uppercase tracking-wider rounded-full px-2.5 py-1"
+                        className="absolute top-3 right-3 z-10 text-[10px] font-bold uppercase tracking-wider rounded-full px-2.5 py-1 shadow-sm"
                         style={{
                           backgroundColor: `${partner.accent}15`,
                           color: partner.accent,
@@ -482,35 +483,32 @@ const PartnersPage: React.FC = () => {
                         {partner.category}
                       </span>
 
-                      {/* Logo placeholder / text mark */}
-                      <div className="flex flex-col items-center text-center">
-                        <div
-                          className="size-16 rounded-2xl flex items-center justify-center mb-3 shadow-sm"
-                          style={{ backgroundColor: `${partner.accent}15` }}
-                        >
-                          {partner.id === 'gcip' && (
-                            <Zap className="size-8" style={{ color: partner.accent }} />
-                          )}
-                          {partner.id === 'ncic' && (
-                            <Target className="size-8" style={{ color: partner.accent }} />
-                          )}
-                          {partner.id === 'tia' && (
-                            <Lightbulb className="size-8" style={{ color: partner.accent }} />
-                          )}
-                          {partner.id === 'tshimologong' && (
-                            <GraduationCap className="size-8" style={{ color: partner.accent }} />
-                          )}
-                          {partner.id === 'dsti' && (
-                            <Building2 className="size-8" style={{ color: partner.accent }} />
-                          )}
+                      {/* Render Logo OR Fallback Text */}
+                      {partner.logoUrl ? (
+                        <img
+                          src={partner.logoUrl}
+                          alt={`${partner.name} logo`}
+                          className={`max-h-full max-w-full object-contain relative z-10 ${partner.logoClassName ?? ''}`}
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center text-center">
+                          <div
+                            className="size-16 rounded-2xl flex items-center justify-center mb-3 shadow-sm"
+                            style={{ backgroundColor: `${partner.accent}15` }}
+                          >
+                            {partner.id === 'ncic' && (
+                              <Target className="size-8" style={{ color: partner.accent }} />
+                            )}
+                          </div>
+                          <p
+                            className="font-display text-base font-extrabold tracking-tight"
+                            style={{ color: partner.accent }}
+                          >
+                            {partner.shortName}
+                          </p>
                         </div>
-                        <p
-                          className="font-display text-base font-extrabold tracking-tight"
-                          style={{ color: partner.accent }}
-                        >
-                          {partner.shortName}
-                        </p>
-                      </div>
+                      )}
                     </div>
 
                     {/* Info panel */}
@@ -521,7 +519,7 @@ const PartnersPage: React.FC = () => {
                       <p className="mt-2 text-xs leading-relaxed text-muted-foreground flex-1">
                         {partner.description}
                       </p>
-                      {partner.logoUrl && (
+                      {partner.logoUrl && !partner.logoUrl.includes('tbn') && (
                         <a
                           href={partner.logoUrl}
                           target="_blank"
