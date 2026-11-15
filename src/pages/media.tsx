@@ -232,6 +232,89 @@ const SceneHeader: React.FC<{
 };
 
 /* ============================================================
+   PRESS PREVIEW — branded tile fallback (Option A)
+   ============================================================ */
+
+const OUTLET_META: Record<string, { acronym: string; color: string }> = {
+  'The Open Letter': { acronym: 'TOL', color: TEAL },
+  'University of the Western Cape': { acronym: 'UWC', color: ORANGE },
+  News24: { acronym: 'N24', color: PINK },
+  'Red Bull': { acronym: 'RB', color: ORANGE },
+  Hypertext: { acronym: 'HTX', color: TEAL },
+  'Weekend Argus': { acronym: 'WA', color: PINK },
+  'StartUp Magazine South Africa': { acronym: 'SM', color: TEAL },
+};
+
+const PressPreviewTile: React.FC<{ outlet: string; tagColor: string }> = ({
+  outlet,
+  tagColor,
+}) => {
+  const meta = OUTLET_META[outlet] ?? { acronym: 'U', color: tagColor };
+
+  return (
+    <div
+      className="relative w-full aspect-[16/9] overflow-hidden rounded-xl"
+      style={{
+        background: `linear-gradient(135deg, ${meta.color}22 0%, ${meta.color}08 60%, transparent 100%)`,
+      }}
+      aria-hidden
+    >
+      <div
+        className="absolute inset-0 opacity-[0.06]"
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)',
+          backgroundSize: '24px 24px',
+          color: meta.color,
+        }}
+      />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span
+          className="font-display text-4xl sm:text-5xl font-extrabold tracking-tight opacity-90"
+          style={{ color: meta.color }}
+        >
+          {meta.acronym}
+        </span>
+      </div>
+      <div
+        className="absolute bottom-0 left-0 right-0 h-[3px]"
+        style={{ backgroundColor: meta.color }}
+      />
+    </div>
+  );
+};
+
+/**
+ * Renders the article image when `imageUrl` is provided, and falls back
+ * to the branded PressPreviewTile if the URL is missing OR fails to load.
+ */
+const PressPreview: React.FC<{
+  outlet: string;
+  tagColor: string;
+  imageUrl?: string;
+  title: string;
+}> = ({ outlet, tagColor, imageUrl, title }) => {
+  const [failed, setFailed] = React.useState(false);
+  const showImage = Boolean(imageUrl) && !failed;
+
+  return (
+    <div className="relative w-full aspect-[16/9] overflow-hidden rounded-xl bg-secondary/40">
+      {showImage ? (
+        <img
+          src={imageUrl}
+          alt={title}
+          loading="lazy"
+          className="absolute inset-0 w-full h-full object-cover"
+          onError={() => setFailed(true)}
+        />
+      ) : (
+        <PressPreviewTile outlet={outlet} tagColor={tagColor} />
+      )}
+    </div>
+  );
+};
+
+/* ============================================================
    REAL PRESS ARTICLES (verified from search)
    ============================================================ */
 
@@ -244,6 +327,15 @@ interface PressArticle {
   date: string;
   tag: 'Feature' | 'Interview' | 'Award' | 'Podcast';
   tagColor: string;
+  /**
+   * Optional hero/OG image for the article card.
+   * When omitted (or when the URL fails to load), the branded
+   * PressPreviewTile fallback is shown instead.
+   *
+   * TODO: populate with the real OG image URLs, e.g.:
+   *   imageUrl: 'https://theopenletter.io/images/uthutho-hero.jpg'
+   */
+  imageUrl?: string;
 }
 
 const PRESS_ARTICLES: PressArticle[] = [
@@ -257,6 +349,7 @@ const PRESS_ARTICLES: PressArticle[] = [
     date: 'Jun 2026',
     tag: 'Feature',
     tagColor: TEAL,
+    // imageUrl: '...',
   },
   {
     id: 'uwc',
@@ -268,6 +361,7 @@ const PRESS_ARTICLES: PressArticle[] = [
     date: 'Apr 2026',
     tag: 'Feature',
     tagColor: ORANGE,
+    // imageUrl: '...',
   },
   {
     id: 'news24',
@@ -279,6 +373,7 @@ const PRESS_ARTICLES: PressArticle[] = [
     date: 'Jun 2026',
     tag: 'Podcast',
     tagColor: PINK,
+    // imageUrl: '...',
   },
   {
     id: 'redbull',
@@ -290,6 +385,7 @@ const PRESS_ARTICLES: PressArticle[] = [
     date: 'Mar 2026',
     tag: 'Award',
     tagColor: ORANGE,
+    // imageUrl: '...',
   },
   {
     id: 'hypertext',
@@ -301,6 +397,7 @@ const PRESS_ARTICLES: PressArticle[] = [
     date: 'Mar 2026',
     tag: 'Feature',
     tagColor: TEAL,
+    // imageUrl: '...',
   },
   {
     id: 'weekendargus',
@@ -312,6 +409,7 @@ const PRESS_ARTICLES: PressArticle[] = [
     date: 'Apr 2026',
     tag: 'Feature',
     tagColor: PINK,
+    // imageUrl: '...',
   },
   {
     id: 'startupmag',
@@ -323,6 +421,7 @@ const PRESS_ARTICLES: PressArticle[] = [
     date: 'Mar 2026',
     tag: 'Feature',
     tagColor: TEAL,
+    // imageUrl: '...',
   },
   {
     id: 'startupmag-interview',
@@ -334,6 +433,7 @@ const PRESS_ARTICLES: PressArticle[] = [
     date: 'Apr 2026',
     tag: 'Interview',
     tagColor: PINK,
+    // imageUrl: '...',
   },
 ];
 
@@ -449,7 +549,17 @@ const AppleScrollSection: React.FC = () => {
                   delay: (i % 3) * 0.08,
                 }}
               >
-                <MagneticCard className="h-full rounded-[1.75rem] bg-card border border-border/60 shadow-xl p-3 flex flex-col">
+                <MagneticCard className="group h-full rounded-[1.75rem] bg-card border border-border/60 shadow-xl p-3 flex flex-col">
+                  {/* Preview: real image when provided, branded tile otherwise */}
+                  <div className="px-1">
+                    <PressPreview
+                      outlet={article.outlet}
+                      tagColor={article.tagColor}
+                      imageUrl={article.imageUrl}
+                      title={article.title}
+                    />
+                  </div>
+
                   <div className="flex items-center justify-between px-3 pt-3 pb-2">
                     <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
                       {article.outlet}
@@ -485,11 +595,11 @@ const AppleScrollSection: React.FC = () => {
                       href={article.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group inline-flex items-center gap-1 text-sm font-semibold transition-colors hover:opacity-80"
+                      className="group/link inline-flex items-center gap-1 text-sm font-semibold transition-colors hover:opacity-80"
                       style={{ color: TEAL }}
                     >
                       Read article
-                      <ExternalLink className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      <ExternalLink className="size-3.5 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
                     </a>
                   </div>
                 </MagneticCard>

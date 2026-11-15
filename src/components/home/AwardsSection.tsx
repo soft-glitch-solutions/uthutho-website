@@ -130,7 +130,7 @@ const awards = [
     subtitle: 'Pitch Den Winners',
     description: 'Crowned winners for our vision to revolutionize transport across the continent.',
     tag: 'Winner',
-    logoClassName: 'invert', // dark logo becomes white on black
+
   },
   {
     logo: '/lovable-uploads/ncic.png',
