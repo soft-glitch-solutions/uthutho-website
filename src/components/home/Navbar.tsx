@@ -23,9 +23,6 @@ const Navbar: React.FC = () => {
     { label: 'Contact', to: '/contact' },
   ];
 
-  /* ------------------------------------------------------------
-     Scroll listener for navbar backdrop
-     ------------------------------------------------------------ */
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -35,32 +32,22 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  /* ------------------------------------------------------------
-     THE FIX — scroll to top on route change.
-     ------------------------------------------------------------ */
   useEffect(() => {
     const pathname = location.pathname;
-
-    // Skip the very first mount
     if (isFirstRender.current) {
       isFirstRender.current = false;
       prevPathRef.current = pathname;
       return;
     }
-
-    // Only act when the pathname actually changed
     if (prevPathRef.current === pathname) return;
     prevPathRef.current = pathname;
 
-    // Kill focus so browser doesn't scroll to the (now unmounted) link
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
 
-    // Hash target — scroll to element if it exists
     if (location.hash) {
       const id = location.hash.replace('#', '');
-      // Defer so the destination page has rendered
       const t = window.setTimeout(() => {
         const el = document.getElementById(id);
         if (el) {
@@ -72,9 +59,7 @@ const Navbar: React.FC = () => {
       return () => window.clearTimeout(t);
     }
 
-    // Plain route change — defer the scroll until after paint
     const raf = requestAnimationFrame(() => {
-      // Second tick lets layout settle on slow mounts
       window.setTimeout(() => {
         window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       }, 0);
@@ -82,16 +67,10 @@ const Navbar: React.FC = () => {
     return () => cancelAnimationFrame(raf);
   }, [location.pathname, location.hash]);
 
-  /* ------------------------------------------------------------
-     Close mobile menu on route change
-     ------------------------------------------------------------ */
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname]);
 
-  /* ------------------------------------------------------------
-     Lock body scroll while mobile menu is open
-     ------------------------------------------------------------ */
   useEffect(() => {
     if (isOpen) {
       const original = document.body.style.overflow;
@@ -102,16 +81,10 @@ const Navbar: React.FC = () => {
     }
   }, [isOpen]);
 
-  /* ------------------------------------------------------------
-     Auto-close mobile menu when we cross into desktop
-     ------------------------------------------------------------ */
   useEffect(() => {
     if (!isMobile && isOpen) setIsOpen(false);
   }, [isMobile, isOpen]);
 
-  /* ------------------------------------------------------------
-     Click handler — blurs the link AND scrolls immediately
-     ------------------------------------------------------------ */
   const handleNavClick = (e: React.MouseEvent<HTMLElement>) => {
     (e.currentTarget as HTMLElement).blur();
     setIsOpen(false);
@@ -141,8 +114,14 @@ const Navbar: React.FC = () => {
             }}
             className="flex shrink-0 items-center gap-2"
           >
-            {/* Updated Brand Text with Teal Dot and League Spartan Font */}
-            <span className="text-2xl font-extrabold tracking-tight text-foreground font-league-spartan flex items-center">
+            {/* Original Image Logo Restored */}
+            <img
+              src="/lovable-uploads/e9056cae-b62d-4515-aae1-ac0e16261d24.png"
+              alt="Uthutho Logo Icon"
+              className="h-8 w-auto"
+            />
+            {/* Updated Brand Text with Teal Dot */}
+            <span className="text-xl font-extrabold tracking-tight text-foreground font-league-spartan flex items-center">
               Uthutho<span style={{ color: TEAL }}>.</span>
             </span>
           </Link>
