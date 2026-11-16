@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   motion,
   useReducedMotion,
@@ -6,6 +6,7 @@ import {
   useTransform,
   useSpring,
   useMotionValue,
+  AnimatePresence,
   type Variants,
   type Transition,
 } from 'framer-motion';
@@ -18,7 +19,6 @@ import {
   Navigation,
   CheckCircle2,
   ChevronDown,
-  Route,
   Timer,
   Signal,
   UserCheck,
@@ -26,6 +26,8 @@ import {
   GraduationCap,
   Radio,
   Send,
+  Camera,
+  Play,
 } from 'lucide-react';
 
 import Navbar from '@/components/home/Navbar';
@@ -36,10 +38,6 @@ import TeamSection from '@/components/home/TeamSection';
 const TEAL = '#1ea2b1';
 const ORANGE = '#f18f01';
 const PINK = '#e151af';
-
-/* ============================================================
-   MOTION PRIMITIVES
-   ============================================================ */
 
 const ONE_UI_EASE = [0.22, 0.25, 0.0, 1.0] as const;
 
@@ -102,10 +100,6 @@ const stagger = (gap = 0.07, delay = 0): Variants => ({
 
 const viewportOnce = { once: true, amount: 0.2 } as const;
 
-/* ============================================================
-   MAGNETIC CARD
-   ============================================================ */
-
 const MagneticCard: React.FC<{
   children: React.ReactNode;
   className?: string;
@@ -143,10 +137,6 @@ const MagneticCard: React.FC<{
     </motion.div>
   );
 };
-
-/* ============================================================
-   SCENE HEADER
-   ============================================================ */
 
 const SceneHeader: React.FC<{
   eyebrow?: string;
@@ -242,79 +232,88 @@ const SceneHeader: React.FC<{
 };
 
 /* ============================================================
-   HERO
+   HERO — League Spartan font & Uthutho. Logo
    ============================================================ */
-
-const HeroSection: React.FC = () => {
-  const prefersReduced = useReducedMotion();
-  const ref = useRef<HTMLElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start start', 'end start'],
-  });
-  const phoneY = useTransform(scrollYProgress, [0, 1], [0, -80]);
-  const phoneScale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
-  const textY = useTransform(scrollYProgress, [0, 1], [0, 40]);
-
-  return (
-    <section
-      ref={ref}
-      id="home"
-      className="relative min-h-screen w-full overflow-hidden bg-background flex items-center justify-center pt-20"
-    >
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-background via-black to-background"></div>
-        <div className="absolute inset-0 bg-[url('/lovable-uploads/uthutho-commute.png')] bg-cover bg-center opacity-5"></div>
-      </div>
-
-      <div className="container mx-auto px-4 sm:px-6 relative z-10 flex flex-col md:flex-row items-center justify-between h-full">
-        <motion.div
-          style={prefersReduced ? undefined : { y: textY }}
-          initial={prefersReduced ? false : 'hidden'}
-          animate={prefersReduced ? undefined : 'visible'}
-          variants={stagger(0.09, 0.2)}
-          className="w-full max-w-xl md:w-1/2 text-center md:text-left"
-        >
-          <motion.h1
-            variants={riseLg}
-            className="mt-6 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
-          >
-            The Future of African{' '}
-            <span className="text-brand-green">Mobility</span>, Mapped.
-          </motion.h1>
-
-          <motion.p
-            variants={rise}
-            className="mt-6 mx-auto md:mx-0 max-w-2xl text-lg text-muted-foreground sm:text-xl"
-          >
-            Uthutho is a community-powered platform that maps transport networks
-            and provides real-time journey information for a safer, more
-            efficient commute.
-          </motion.p>
-
-          <motion.div
-            variants={rise}
-            className="mt-8 flex flex-col items-center md:items-start justify-center md:justify-start gap-4"
-          >
-            <div className="flex flex-wrap justify-center md:justify-start gap-4">
+   const HeroSection: React.FC = () => {
+    const [actionIndex, setActionIndex] = useState(0);
+    const actions = ['the taxi.', 'the bus.', 'the train.'];
+  
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setActionIndex((prev) => (prev + 1) % actions.length);
+      }, 2600);
+      return () => clearInterval(interval);
+    }, [actions.length]);
+  
+    return (
+      <section
+        id="home"
+        className="relative min-h-screen w-full overflow-hidden bg-[#070707] flex items-center pt-20"
+      >
+        <div className="absolute inset-0 z-0">
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-30"
+            style={{ backgroundImage: "url('/lovable-uploads/header.jpg')" }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#070707] via-[#070707]/90 to-transparent" />
+        </div>
+  
+        <div className="container mx-auto px-6 sm:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between h-full py-12 md:py-0">
+  
+          <div className="w-full md:w-1/2 flex flex-col items-start pt-12 md:pt-0">
+  
+            {/* Brand Logo + Headline */}
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[6.5rem] font-extrabold tracking-tighter text-white leading-[0.92] mb-6 font-league-spartan">
+              <span className="block mb-2 sm:mb-4">
+                Uthutho<span style={{ color: TEAL }}>.</span>
+              </span>
+              <span className="block">
+                Never miss
+              </span>
+              <div className="relative h-[1.15em] w-full overflow-hidden">
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={actions[actionIndex]}
+                    initial={{ y: 40, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -40, opacity: 0 }}
+                    transition={{ duration: 0.4, ease: ONE_UI_EASE }}
+                    className="absolute left-0 origin-bottom"
+                    style={{ color: TEAL }}
+                  >
+                    {actions[actionIndex]}
+                  </motion.span>
+                </AnimatePresence>
+              </div>
+              <div className="h-2 sm:h-3 w-1/2 mt-2 rounded-full" style={{ backgroundColor: TEAL }} />
+            </h1>
+  
+            <p className="text-base sm:text-lg text-white/70 mb-10 max-w-md leading-relaxed font-medium">
+              See your ride coming. Join the commute.
+            </p>
+  
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8">
               <a
                 href="https://www.mobile.uthutho.co.za/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex items-center justify-center rounded-full bg-brand-green px-6 py-3 text-lg font-semibold text-white transition-colors hover:bg-brand-green/80"
+                className="group inline-flex items-center justify-center gap-3 rounded-full px-8 py-4 text-lg font-bold text-white transition-all hover:scale-105 shadow-[0_0_20px_rgba(30,162,177,0.4)]"
+                style={{ backgroundColor: TEAL }}
               >
-                Download App
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                Start commuting
+                <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
               </a>
+  
               <a
                 href="#partners"
-                className="group inline-flex items-center justify-center rounded-full border border-border bg-secondary/60 px-6 py-3 text-lg font-semibold text-foreground transition-colors hover:bg-secondary/80"
+                className="group flex items-center gap-2 text-sm font-semibold text-white/70 hover:text-white transition-colors"
               >
-                Partner With Us
+                <span className="h-[1px] w-8 bg-white/30 group-hover:bg-white transition-colors" />
+                Partner with us
               </a>
             </div>
-            <div className="flex flex-wrap justify-center md:justify-start items-center gap-4 mt-4">
+  
+            <div className="flex flex-wrap items-center gap-3">
               <a
                 href="https://play.google.com/store/apps/details?id=com.softglitch.uthutho&hl=en_ZA"
                 target="_blank"
@@ -352,42 +351,34 @@ const HeroSection: React.FC = () => {
                 />
               </a>
             </div>
-          </motion.div>
-        </motion.div>
-
-        <motion.div
-          style={
-            prefersReduced ? undefined : { y: phoneY, scale: phoneScale }
-          }
-          initial={prefersReduced ? false : { opacity: 0, scale: 0.92 }}
-          animate={prefersReduced ? undefined : { opacity: 1, scale: 1 }}
-          transition={{ ...SOFT_SPRING, delay: 0.4 }}
-          className="w-full md:w-1/2 mt-12 md:mt-0 flex justify-center"
-        >
-          <div className="relative w-[280px] sm:w-[320px] h-[560px] sm:h-[640px] mx-auto pointer-events-none">
-            <div className="absolute inset-0 bg-gradient-to-r from-brand-green via-brand-orange to-brand-red opacity-20 blur-2xl rounded-full"></div>
-            <div className="relative z-10 bg-black/60 rounded-[40px] p-3 shadow-2xl border border-white/10 backdrop-blur-sm">
-              <div className="relative overflow-hidden rounded-[32px] h-[530px] sm:h-[610px]">
-                <iframe
-                  className="w-full h-full absolute top-0 left-0 scale-[1.02]"
-                  src="https://www.youtube.com/embed/AFaaiVxz0LU?autoplay=1&mute=1&loop=1&playlist=AFaaiVxz0LU&controls=0&showinfo=0&rel=0&playsinline=1&modestbranding=1"
-                  title="Uthutho App Showcase"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
+          </div>
+  
+          <div className="w-full md:w-1/2 mt-16 md:mt-0 flex justify-center md:justify-end">
+            <div className="relative w-[280px] sm:w-[320px] h-[560px] sm:h-[640px]">
+              <div
+                className="absolute inset-0 opacity-20 blur-[100px] rounded-full"
+                style={{ backgroundColor: TEAL }}
+              />
+  
+              <div className="relative z-10 bg-black/80 rounded-[40px] p-3 shadow-2xl border border-white/10 backdrop-blur-md">
+                <div className="relative overflow-hidden rounded-[32px] h-[530px] sm:h-[610px] bg-black">
+                  <iframe
+                    className="w-full h-full absolute top-0 left-0 scale-[1.02]"
+                    src="https://www.youtube.com/embed/AFaaiVxz0LU?autoplay=1&mute=1&loop=1&playlist=AFaaiVxz0LU&controls=0&showinfo=0&rel=0&playsinline=1&modestbranding=1"
+                    title="Uthutho App Showcase"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </motion.div>
-      </div>
-    </section>
-  );
-};
-
-/* ============================================================
-   AS SEEN ON
-   ============================================================ */
+  
+        </div>
+      </section>
+    );
+  };
 
 const AS_SEEN_ON = [
   'Red Bull',
@@ -454,10 +445,6 @@ const AsSeenOnSection: React.FC = () => {
   );
 };
 
-/* ============================================================
-   STORY SECTION
-   ============================================================ */
-
 const StorySection: React.FC = () => {
   const prefersReduced = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
@@ -468,12 +455,6 @@ const StorySection: React.FC = () => {
   });
 
   const routeLength = useTransform(scrollYProgress, [0.1, 0.6], [0, 1]);
-  const dotX = useTransform(scrollYProgress, [0.1, 0.6], [0, 100]);
-  const dotOpacity = useTransform(
-    scrollYProgress,
-    [0.05, 0.15, 0.55, 0.65],
-    [0, 1, 1, 0]
-  );
 
   const storySteps = [
     {
@@ -522,7 +503,7 @@ const StorySection: React.FC = () => {
           whileInView={prefersReduced ? undefined : 'visible'}
           viewport={viewportOnce}
           variants={scaleIn}
-          className="relative mb-12 sm:mb-16 rounded-[1.75rem] bg-card border border-border/60 shadow-xl p-6 sm:p-10 overflow-hidden"
+          className="relative mb-8 rounded-[1.75rem] bg-card border border-border/60 shadow-xl p-6 sm:p-10 overflow-hidden"
         >
           <svg
             viewBox="0 0 100 10"
@@ -593,6 +574,7 @@ const StorySection: React.FC = () => {
           </div>
         </motion.div>
 
+
         <motion.div
           initial={prefersReduced ? false : { opacity: 0, y: 16 }}
           whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
@@ -611,10 +593,6 @@ const StorySection: React.FC = () => {
     </section>
   );
 };
-
-/* ============================================================
-   PROBLEM
-   ============================================================ */
 
 const PROBLEM_STATS = [
   {
@@ -847,62 +825,82 @@ const ProblemSection: React.FC = () => {
               transition={{ ...ONE_UI_TRANSITION, delay: 0.3 }}
               className="mt-8 rounded-[1.75rem] bg-card border border-border/60 shadow-xl p-6 sm:p-8"
             >
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground mb-4">
-                A real commute, visualized
-              </p>
-              <div className="relative">
-                <div className="absolute left-0 right-0 top-4 h-[2px] bg-border/60" />
-                <motion.div
-                  initial={prefersReduced ? false : { scaleX: 0 }}
-                  whileInView={prefersReduced ? undefined : { scaleX: 1 }}
-                  viewport={viewportOnce}
-                  transition={{ duration: 1.4, ease: ONE_UI_EASE, delay: 0.4 }}
-                  className="absolute left-0 right-0 top-4 h-[2px] origin-left"
-                  style={{
-                    background: `linear-gradient(to right, ${TEAL}, ${ORANGE}, ${PINK})`,
-                  }}
-                />
-
-                <div className="relative flex justify-between">
-                  {[
-                    { t: '06:20', l: 'At the stop', c: TEAL },
-                    { t: '06:48', l: 'Still waiting', c: ORANGE },
-                    { t: '07:05', l: 'Taxi arrives', c: PINK },
-                    { t: '07:05+', l: 'Uthutho fixes this', c: TEAL },
-                  ].map((node, i) => (
+              <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground mb-4">
+                    A real commute, visualized
+                  </p>
+                  <div className="relative">
+                    <div className="absolute left-0 right-0 top-4 h-[2px] bg-border/60" />
                     <motion.div
-                      key={node.l}
-                      initial={prefersReduced ? false : { opacity: 0, scale: 0.6 }}
-                      whileInView={
-                        prefersReduced ? undefined : { opacity: 1, scale: 1 }
-                      }
+                      initial={prefersReduced ? false : { scaleX: 0 }}
+                      whileInView={prefersReduced ? undefined : { scaleX: 1 }}
                       viewport={viewportOnce}
-                      transition={{
-                        ...ONE_UI_TRANSITION,
-                        delay: 0.5 + i * 0.15,
+                      transition={{ duration: 1.4, ease: ONE_UI_EASE, delay: 0.4 }}
+                      className="absolute left-0 right-0 top-4 h-[2px] origin-left"
+                      style={{
+                        background: `linear-gradient(to right, ${TEAL}, ${ORANGE}, ${PINK})`,
                       }}
-                      className="flex flex-col items-center text-center flex-1"
-                    >
-                      <div
-                        className="size-8 rounded-full bg-background border-2 flex items-center justify-center z-10"
-                        style={{ borderColor: node.c }}
-                      >
-                        <div
-                          className="size-3 rounded-full"
-                          style={{ backgroundColor: node.c }}
-                        />
-                      </div>
-                      <p
-                        className="mt-2 text-[10px] font-bold tracking-wider"
-                        style={{ color: node.c }}
-                      >
-                        {node.t}
-                      </p>
-                      <p className="mt-0.5 text-[11px] text-muted-foreground font-medium">
-                        {node.l}
-                      </p>
-                    </motion.div>
-                  ))}
+                    />
+
+                    <div className="relative flex justify-between">
+                      {[
+                        { t: '06:20', l: 'At the stop', c: TEAL },
+                        { t: '06:48', l: 'Still waiting', c: ORANGE },
+                        { t: '07:05', l: 'Taxi arrives', c: PINK },
+                        { t: '07:05+', l: 'Uthutho fixes this', c: TEAL },
+                      ].map((node, i) => (
+                        <motion.div
+                          key={node.l}
+                          initial={
+                            prefersReduced ? false : { opacity: 0, scale: 0.6 }
+                          }
+                          whileInView={
+                            prefersReduced ? undefined : { opacity: 1, scale: 1 }
+                          }
+                          viewport={viewportOnce}
+                          transition={{
+                            ...ONE_UI_TRANSITION,
+                            delay: 0.5 + i * 0.15,
+                          }}
+                          className="flex flex-col items-center text-center flex-1"
+                        >
+                          <div
+                            className="size-8 rounded-full bg-background border-2 flex items-center justify-center z-10"
+                            style={{ borderColor: node.c }}
+                          >
+                            <div
+                              className="size-3 rounded-full"
+                              style={{ backgroundColor: node.c }}
+                            />
+                          </div>
+                          <p
+                            className="mt-2 text-[10px] font-bold tracking-wider"
+                            style={{ color: node.c }}
+                          >
+                            {node.t}
+                          </p>
+                          <p className="mt-0.5 text-[11px] text-muted-foreground font-medium">
+                            {node.l}
+                          </p>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="md:w-40 lg:w-48 shrink-0">
+                  <div className="relative rounded-[1.25rem] overflow-hidden border border-border/60 bg-black">
+                    <img
+                      src="/images/planner.gif"
+                      alt="Planning a commute"
+                      className="w-full h-32 md:h-40 object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                  <p className="mt-2 text-center text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+                    Planner
+                  </p>
                 </div>
               </div>
             </motion.div>
@@ -913,109 +911,11 @@ const ProblemSection: React.FC = () => {
   );
 };
 
-/* ============================================================
-   HOW IT WORKS — with animated mini-diagrams
-   ============================================================ */
-
-/**
- * Step 1 graphic: a stop pin with a pulsing ring + a "waiting" avatar
- */
-const GpsWaitingVisual: React.FC<{ color: string; animate: boolean }> = ({
-  color,
-  animate,
-}) => (
-  <div className="relative size-full flex items-center justify-center">
-    {/* pulsing rings around the stop */}
-    {[0, 0.8, 1.6].map((delay, i) => (
-      <motion.span
-        key={i}
-        aria-hidden
-        className="absolute rounded-full"
-        style={{
-          width: 44,
-          height: 44,
-          border: `2px solid ${color}`,
-          opacity: 0.35,
-        }}
-        animate={
-          animate
-            ? { scale: [1, 2.4], opacity: [0.35, 0] }
-            : undefined
-        }
-        transition={{
-          duration: 2.2,
-          repeat: Infinity,
-          delay,
-          ease: 'easeOut',
-        }}
-      />
-    ))}
-    {/* stop pin */}
-    <div
-      className="relative z-10 size-10 rounded-full flex items-center justify-center shadow-lg"
-      style={{ backgroundColor: 'rgba(255,255,255,0.9)' }}
-    >
-      <MapPin className="size-5" style={{ color }} />
-    </div>
-    {/* waiting avatar */}
-    <div
-      className="absolute bottom-2 right-2 z-10 size-6 rounded-full flex items-center justify-center shadow-md"
-      style={{ backgroundColor: 'rgba(255,255,255,0.85)' }}
-    >
-      <UserCheck className="size-3.5" style={{ color }} />
-    </div>
-  </div>
-);
-
-/**
- * Step 2 graphic: two nodes with a moving dot travelling between them
- */
-const GpsMovingVisual: React.FC<{ color: string; animate: boolean }> = ({
-  color,
-  animate,
-}) => (
-  <div className="relative size-full flex items-center justify-center px-6">
-    {/* track line */}
-    <div
-      className="absolute left-8 right-8 top-1/2 -translate-y-1/2 h-[2px] rounded-full"
-      style={{ backgroundColor: 'rgba(255,255,255,0.35)' }}
-    />
-    {/* left node: waiting user */}
-    <div
-      className="absolute left-6 top-1/2 -translate-y-1/2 size-8 rounded-full flex items-center justify-center shadow-md z-10"
-      style={{ backgroundColor: 'rgba(255,255,255,0.9)' }}
-    >
-      <MapPin className="size-4" style={{ color }} />
-    </div>
-    {/* right node: taxi */}
-    <div
-      className="absolute right-6 top-1/2 -translate-y-1/2 size-8 rounded-full flex items-center justify-center shadow-md z-10"
-      style={{ backgroundColor: 'rgba(255,255,255,0.9)' }}
-    >
-      <Bus className="size-4" style={{ color }} />
-    </div>
-    {/* travelling GPS dot */}
-    <motion.div
-      aria-hidden
-      className="absolute top-1/2 -translate-y-1/2 z-20 size-3 rounded-full shadow-lg"
-      style={{ backgroundColor: '#ffffff' }}
-      animate={animate ? { left: ['18%', '78%', '18%'] } : undefined}
-      transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
-    >
-      <Radio className="size-3 absolute inset-0 m-auto" style={{ color }} />
-    </motion.div>
-  </div>
-);
-
-/**
- * Step 3 graphic: a checkmark drawn inside a circle with radiating pulse
- */
 const GpsConfirmedVisual: React.FC<{ color: string; animate: boolean }> = ({
   color,
   animate,
 }) => (
   <div className="relative size-full flex items-center justify-center">
-    {/* radiating pulse */}
     {[0, 1].map((delay, i) => (
       <motion.span
         key={i}
@@ -1042,7 +942,6 @@ const GpsConfirmedVisual: React.FC<{ color: string; animate: boolean }> = ({
     >
       <CheckCircle2 className="size-6" style={{ color }} />
     </div>
-    {/* tiny badge */}
     <div
       className="absolute top-2 right-2 z-10 size-6 rounded-full flex items-center justify-center shadow-md"
       style={{ backgroundColor: 'rgba(255,255,255,0.85)' }}
@@ -1059,7 +958,8 @@ const HOW_IT_WORKS = [
     body: "Arrive at your stop and mark yourself as waiting in the app. Geofencing verifies you're actually there.",
     icon: MapPin,
     color: TEAL,
-    visual: 'waiting' as const,
+    gif: '/images/stop.gif',
+    caption: 'At the stop',
   },
   {
     step: '02',
@@ -1067,7 +967,8 @@ const HOW_IT_WORKS = [
     body: 'When a commuter on the same route starts moving, their GPS broadcasts progress to everyone waiting along that line.',
     icon: Navigation,
     color: ORANGE,
-    visual: 'moving' as const,
+    gif: '/images/route.gif',
+    caption: 'On the route',
   },
   {
     step: '03',
@@ -1075,7 +976,8 @@ const HOW_IT_WORKS = [
     body: 'See exactly where your transport is — without a single driver opting in, and without hardware in the taxi.',
     icon: CheckCircle2,
     color: PINK,
-    visual: 'confirmed' as const,
+    gif: '/images/hub.gif',
+    caption: 'Till Destination',
   },
 ];
 
@@ -1118,42 +1020,40 @@ const HowItWorksSection: React.FC = () => {
                   },
                 }}
               >
-                <MagneticCard className="rounded-[1.75rem] bg-card border border-border/60 shadow-xl p-3">
-                  <div
-                    className="relative w-full h-40 rounded-[1.25rem] flex items-center justify-center overflow-hidden"
-                    style={{ backgroundColor: item.color }}
-                  >
-                    <span className="absolute top-3 left-4 text-[11px] font-bold text-white/70 z-20">
-                      {item.step}
-                    </span>
+                <MagneticCard className="rounded-[1.75rem] bg-card border border-border/60 shadow-xl p-3 h-full">
+                  <div className="relative w-full h-44 rounded-[1.25rem] overflow-hidden bg-black">
+                    {item.gif ? (
+                      <>
+                        <img
+                          src={item.gif}
+                          alt={item.caption ?? ''}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                        <div className="absolute top-3 left-3 bg-white/90 rounded-full px-2.5 py-1 text-[10px] font-bold text-black shadow-sm">
+                          {item.step} · {item.caption}
+                        </div>
+                      </>
+                    ) : (
+                      <div
+                        className="relative w-full h-full flex items-center justify-center"
+                        style={{ backgroundColor: item.color }}
+                      >
+                        <span className="absolute top-3 left-3 text-[11px] font-bold text-white/80">
+                          {item.step}
+                        </span>
+                        <GpsConfirmedVisual
+                          color="#ffffff"
+                          animate={!prefersReduced}
+                        />
+                      </div>
+                    )}
 
-                    {/* Icon chip in the corner (kept from before) */}
-                    <div className="absolute top-3 right-3 size-7 rounded-full bg-white/20 flex items-center justify-center z-20">
+                    <div className="absolute top-3 right-3 size-7 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center">
                       <Icon className="size-3.5 text-white" />
                     </div>
-
-                    {/* Live mini-diagram */}
-                    <div className="absolute inset-0">
-                      {item.visual === 'waiting' && (
-                        <GpsWaitingVisual
-                          color={item.color}
-                          animate={!prefersReduced}
-                        />
-                      )}
-                      {item.visual === 'moving' && (
-                        <GpsMovingVisual
-                          color={item.color}
-                          animate={!prefersReduced}
-                        />
-                      )}
-                      {item.visual === 'confirmed' && (
-                        <GpsConfirmedVisual
-                          color={item.color}
-                          animate={!prefersReduced}
-                        />
-                      )}
-                    </div>
                   </div>
+
                   <div className="p-4 pt-5">
                     <h3 className="font-display text-lg font-extrabold tracking-tight text-foreground">
                       {item.title}
@@ -1172,16 +1072,8 @@ const HowItWorksSection: React.FC = () => {
   );
 };
 
-/* ============================================================
-   FOR YOU — with contextual schematics + comparison strip
-   ============================================================ */
-
-/**
- * Commuter schematic: a route line with 3 stops and a travelling taxi
- */
 const CommuterRouteVisual: React.FC<{ animate: boolean }> = ({ animate }) => (
   <div className="absolute inset-0 pointer-events-none">
-    {/* faint route line */}
     <svg
       viewBox="0 0 100 100"
       preserveAspectRatio="none"
@@ -1199,7 +1091,6 @@ const CommuterRouteVisual: React.FC<{ animate: boolean }> = ({ animate }) => (
       />
     </svg>
 
-    {/* stops */}
     {[
       { x: '8%', y: '78%' },
       { x: '50%', y: '46%' },
@@ -1221,7 +1112,6 @@ const CommuterRouteVisual: React.FC<{ animate: boolean }> = ({ animate }) => (
       />
     ))}
 
-    {/* travelling taxi dot */}
     <motion.div
       aria-hidden
       className="absolute size-6 rounded-full bg-white shadow-lg flex items-center justify-center"
@@ -1244,7 +1134,6 @@ const CommuterRouteVisual: React.FC<{ animate: boolean }> = ({ animate }) => (
       <Bus className="size-3.5" style={{ color: TEAL }} />
     </motion.div>
 
-    {/* "LIVE" chip */}
     <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-white/15 backdrop-blur-sm rounded-full pl-1.5 pr-2.5 py-1">
       <motion.span
         aria-hidden
@@ -1259,12 +1148,8 @@ const CommuterRouteVisual: React.FC<{ animate: boolean }> = ({ animate }) => (
   </div>
 );
 
-/**
- * Parent schematic: a school + shield-check with verified ring
- */
 const ParentVerifiedVisual: React.FC<{ animate: boolean }> = ({ animate }) => (
   <div className="absolute inset-0 pointer-events-none">
-    {/* pulsing rings around a shield */}
     {[0, 0.8, 1.6].map((delay, i) => (
       <motion.span
         key={i}
@@ -1288,7 +1173,6 @@ const ParentVerifiedVisual: React.FC<{ animate: boolean }> = ({ animate }) => (
       />
     ))}
 
-    {/* centre badge */}
     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 size-14 rounded-full bg-white shadow-lg flex items-center justify-center">
       <GraduationCap className="size-6" style={{ color: '#000' }} />
       <div
@@ -1299,7 +1183,6 @@ const ParentVerifiedVisual: React.FC<{ animate: boolean }> = ({ animate }) => (
       </div>
     </div>
 
-    {/* tiny floating labels */}
     <div className="absolute top-3 left-3 bg-white/15 backdrop-blur-sm rounded-full px-2.5 py-1 text-[9px] font-bold tracking-wider text-white">
       VERIFIED
     </div>
@@ -1456,7 +1339,6 @@ const ForYouAppleSection: React.FC = () => {
                       className="relative w-full h-52 rounded-[1.25rem] flex flex-col justify-end p-6 overflow-hidden"
                       style={{ backgroundColor: card.bg, color: card.fg }}
                     >
-                      {/* Live schematic in the background */}
                       {card.visual === 'commuter' && (
                         <CommuterRouteVisual animate={!prefersReduced} />
                       )}
@@ -1464,7 +1346,6 @@ const ForYouAppleSection: React.FC = () => {
                         <ParentVerifiedVisual animate={!prefersReduced} />
                       )}
 
-                      {/* Text sits on top with a subtle gradient for legibility */}
                       <div className="relative z-10 mt-auto">
                         <p className="text-[11px] font-bold uppercase tracking-wider opacity-90">
                           {card.eyebrow}
@@ -1498,7 +1379,6 @@ const ForYouAppleSection: React.FC = () => {
               ))}
             </div>
 
-            {/* NEW: side-by-side comparison strip — gives context */}
             <motion.div
               initial={prefersReduced ? false : { opacity: 0, y: 24 }}
               whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
@@ -1511,7 +1391,6 @@ const ForYouAppleSection: React.FC = () => {
               </p>
 
               <div className="grid gap-6 sm:grid-cols-2">
-                {/* COMMUTER JOURNEY */}
                 <div>
                   <div className="flex items-center gap-2 mb-4">
                     <div
@@ -1589,7 +1468,6 @@ const ForYouAppleSection: React.FC = () => {
                   </ul>
                 </div>
 
-                {/* PARENT JOURNEY */}
                 <div>
                   <div className="flex items-center gap-2 mb-4">
                     <div
@@ -1678,10 +1556,6 @@ const ForYouAppleSection: React.FC = () => {
   );
 };
 
-/* ============================================================
-   AWARDS
-   ============================================================ */
-
 const awards = [
   {
     logo: 'https://img.redbull.com/images/c_limit,w_2000/e_trim:1:transparent/c_limit,w_300,h_272/bo_5px_solid_rgb:00000000/q_auto:best,f_auto/redbullcom/2024/7/25/hckaipzsonzjai5rvhld/red-bull-basement-logo',
@@ -1699,7 +1573,7 @@ const awards = [
     description:
       'Crowned winners for our vision to revolutionize transport across the continent.',
     tag: 'Winner',
-    logoClassName: 'invert',
+    logoClassName: '',
   },
   {
     logo: '/lovable-uploads/ncic.png',
@@ -1716,7 +1590,17 @@ const AwardsSection: React.FC = () => {
   const prefersReduced = useReducedMotion();
 
   return (
-    <section id="awards" className="relative bg-secondary/40">
+    <section id="awards" className="relative bg-secondary/40 overflow-hidden">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-20"
+        style={{ backgroundImage: "url('/lovable-uploads/Winning.jpg')" }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-secondary/40"
+      />
+
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-32 sm:h-48 z-20"
@@ -1733,12 +1617,6 @@ const AwardsSection: React.FC = () => {
             'linear-gradient(to top, hsl(var(--primary) / 0.18), transparent)',
         }}
       />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 select-none text-center font-display text-[18vw] sm:text-[22vw] font-black leading-none tracking-tighter text-foreground/[0.035]"
-      >
-        RECOGNITION
-      </div>
 
       <div className="relative z-10 mx-auto w-full max-w-6xl lg:max-w-7xl px-4 py-16 sm:px-6 sm:py-20">
         <SceneHeader
@@ -1822,22 +1700,20 @@ const AwardsSection: React.FC = () => {
   );
 };
 
-/* ============================================================
-   MISSION / VISION
-   ============================================================ */
-
 const MISSION_VISION = [
   {
     label: 'Our Mission',
     title: 'Make public transport predictable',
     body: 'Born from the frustration of unclear taxi routes and uncertain wait times, Uthutho turns commuters into a live GPS network — no hardware in the taxi, no driver opt-in required.',
     color: TEAL,
+    image: '/lovable-uploads/IMG_2553.jpg',
   },
   {
     label: 'Our Vision',
     title: 'Scale across emerging markets',
     body: 'Red Bull Basement judges saw "real potential to scale across South Africa and even globally." Uthutho is building for the billions who rely on informal transport.',
     color: PINK,
+    image: null,
   },
 ];
 
@@ -1877,19 +1753,39 @@ const MissionVisionSection: React.FC = () => {
                 },
               }}
             >
-              <MagneticCard className="rounded-[1.75rem] bg-card border border-border/60 shadow-xl p-8 sm:p-10">
-                <p
-                  className="text-[11px] font-bold uppercase tracking-[0.2em]"
-                  style={{ color: item.color }}
-                >
-                  {item.label}
-                </p>
-                <h3 className="mt-3 font-display text-2xl sm:text-3xl font-extrabold leading-tight text-foreground">
-                  {item.title}
-                </h3>
-                <p className="mt-4 text-sm sm:text-base leading-relaxed text-muted-foreground">
-                  {item.body}
-                </p>
+              <MagneticCard className="rounded-[1.75rem] bg-card border border-border/60 shadow-xl p-3 h-full">
+                <div className="grid sm:grid-cols-[1fr_auto] gap-3 sm:gap-4 items-stretch">
+                  <div className="p-5 sm:p-6">
+                    <p
+                      className="text-[11px] font-bold uppercase tracking-[0.2em]"
+                      style={{ color: item.color }}
+                    >
+                      {item.label}
+                    </p>
+                    <h3 className="mt-3 font-display text-2xl sm:text-3xl font-extrabold leading-tight text-foreground">
+                      {item.title}
+                    </h3>
+                    <p className="mt-4 text-sm sm:text-base leading-relaxed text-muted-foreground">
+                      {item.body}
+                    </p>
+                  </div>
+
+                  {item.image && (
+                    <div className="sm:w-40 lg:w-48 p-2 sm:pl-0">
+                      <div className="relative h-40 sm:h-full rounded-[1.25rem] overflow-hidden bg-black">
+                        <img
+                          src={item.image}
+                          alt="Uthutho team and community"
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                        <div className="absolute bottom-2 left-2 bg-white/90 rounded-full px-2 py-0.5 text-[9px] font-bold text-black">
+                          TEAM
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </MagneticCard>
             </motion.div>
           ))}
@@ -1899,9 +1795,158 @@ const MissionVisionSection: React.FC = () => {
   );
 };
 
-/* ============================================================
-   CTA
-   ============================================================ */
+const IN_THE_WILD_PHOTOS = [
+  {
+    src: '/lovable-uploads/uthutho-commute.jpg',
+    alt: 'Commuters in Cape Town',
+    caption: 'The commute we’re fixing',
+    tag: 'Cape Town',
+    span: 'sm:col-span-2 sm:row-span-2',
+    height: 'h-64 sm:h-full',
+  },
+  {
+    src: '/lovable-uploads/Tech.jpg',
+    alt: 'Uthutho at a tech showcase',
+    caption: 'On the tech stage',
+    tag: 'Showcase',
+    span: '',
+    height: 'h-52 sm:h-56',
+  },
+  {
+    src: '/lovable-uploads/IMG_2553.jpg',
+    alt: 'Uthutho team',
+    caption: 'The people building it',
+    tag: 'Team',
+    span: '',
+    height: 'h-52 sm:h-56',
+  },
+];
+
+const IN_THE_WILD_GIFS = [
+  { src: '/images/hub.gif', label: 'Hub', desc: 'Where commuters gather' },
+  { src: '/images/planner.gif', label: 'Planner', desc: 'Plan before you move' },
+  { src: '/images/route.gif', label: 'Route', desc: 'Live route progress' },
+  { src: '/images/stop.gif', label: 'Stop', desc: 'At your stop' },
+];
+
+const InTheWildSection: React.FC = () => {
+  const prefersReduced = useReducedMotion();
+
+  return (
+    <section id="in-the-wild" className="relative bg-background overflow-hidden">
+      <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
+        <SceneHeader
+          eyebrow="In the Wild"
+          title="Real streets, real"
+          accentWord="commutes"
+          accentColor={TEAL}
+          description="Uthutho isn’t a concept deck. Here’s the commute, the team, and the product in motion — the same streets the app is built for."
+        />
+
+        <motion.div
+          initial={prefersReduced ? false : 'hidden'}
+          whileInView={prefersReduced ? undefined : 'visible'}
+          viewport={viewportOnce}
+          variants={stagger(0.08)}
+          className="grid gap-4 sm:gap-6 sm:grid-cols-3 sm:grid-rows-2 mb-10"
+        >
+          {IN_THE_WILD_PHOTOS.map((photo, i) => (
+            <motion.div
+              key={photo.src}
+              variants={{
+                hidden: { opacity: 0, y: 24, scale: 0.97 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  transition: { ...ONE_UI_TRANSITION, delay: i * 0.08 },
+                },
+              }}
+              className={photo.span}
+            >
+              <MagneticCard className="rounded-[1.75rem] bg-card border border-border/60 shadow-xl p-2 h-full">
+                <div
+                  className={`relative rounded-[1.25rem] overflow-hidden bg-black ${photo.height}`}
+                >
+                  <img
+                    src={photo.src}
+                    alt={photo.alt}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/50 backdrop-blur-sm rounded-full px-2.5 py-1">
+                    <Camera className="size-3 text-white" />
+                    <span className="text-[9px] font-bold tracking-wider text-white uppercase">
+                      {photo.tag}
+                    </span>
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
+                    <p className="text-sm font-bold text-white">
+                      {photo.caption}
+                    </p>
+                  </div>
+                </div>
+              </MagneticCard>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        <motion.div
+          initial={prefersReduced ? false : { opacity: 0, y: 16 }}
+          whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+          viewport={viewportOnce}
+          transition={ONE_UI_TRANSITION}
+          className="mb-4 flex items-center gap-2"
+        >
+          <Play className="size-4" style={{ color: TEAL }} />
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+            The product in motion
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={prefersReduced ? false : 'hidden'}
+          whileInView={prefersReduced ? undefined : 'visible'}
+          viewport={viewportOnce}
+          variants={stagger(0.07)}
+          className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4"
+        >
+          {IN_THE_WILD_GIFS.map((gif, i) => (
+            <motion.div
+              key={gif.src}
+              variants={{
+                hidden: { opacity: 0, y: 20, scale: 0.97 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  transition: { ...ONE_UI_TRANSITION, delay: i * 0.07 },
+                },
+              }}
+            >
+              <MagneticCard className="rounded-[1.75rem] bg-card border border-border/60 shadow-xl p-2 h-full">
+                <div className="relative rounded-[1.25rem] overflow-hidden bg-black">
+                  <img
+                    src={gif.src}
+                    alt={gif.label}
+                    className="w-full h-40 sm:h-44 object-cover"
+                    loading="lazy"
+                  />
+                  <div className="absolute top-2 left-2 bg-white/90 rounded-full px-2 py-0.5 text-[9px] font-bold text-black">
+                    {gif.label}
+                  </div>
+                </div>
+                <p className="px-2 py-3 text-xs font-semibold text-muted-foreground">
+                  {gif.desc}
+                </p>
+              </MagneticCard>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+};
 
 const CtaSection: React.FC = () => {
   const prefersReduced = useReducedMotion();
@@ -1986,10 +2031,6 @@ const CtaSection: React.FC = () => {
   );
 };
 
-/* ============================================================
-   HOME
-   ============================================================ */
-
 const Home: React.FC = () => {
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, {
@@ -2012,6 +2053,7 @@ const Home: React.FC = () => {
         <HeroSection />
         <AsSeenOnSection />
         <StorySection />
+        <InTheWildSection />
         <ProblemSection />
         <HowItWorksSection />
         <JourneyDrive />

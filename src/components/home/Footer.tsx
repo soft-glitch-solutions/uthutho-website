@@ -2,6 +2,8 @@ import { Facebook, Instagram, Linkedin, Youtube } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import React from 'react';
 
+const TEAL = '#1ea2b1';
+
 /* TikTok Icon (lucide-react does not include TikTok) */
 const TikTokIcon = ({ className }: { className?: string }) => (
   <svg
@@ -20,8 +22,6 @@ const Footer = () => {
 
   /* ------------------------------------------------------------
      Blur + immediate scroll reset on any navigation click
-     (same trick as the Navbar — kills focus so the browser
-     doesn't auto-scroll to the clicked link after route swap)
      ------------------------------------------------------------ */
   const handleNavClick = (e: React.MouseEvent<HTMLElement>) => {
     (e.currentTarget as HTMLElement).blur();
@@ -73,14 +73,12 @@ const Footer = () => {
                   window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
                 }
               }}
-              className="flex items-center space-x-3 mb-6"
+              className="inline-block mb-6"
             >
-              <img
-                src="/lovable-uploads/e9056cae-b62d-4515-aae1-ac0e16261d24.png"
-                alt="Uthutho Logo"
-                className="h-8 w-8"
-              />
-              <span className="text-xl font-bold text-primary">Uthutho</span>
+              {/* Updated Brand Text with Teal Dot and League Spartan Font */}
+              <span className="text-2xl font-extrabold tracking-tight text-white font-league-spartan flex items-center">
+                Uthutho<span style={{ color: TEAL }}>.</span>
+              </span>
             </Link>
             <p className="text-gray-400">
               Community-powered transport intelligence for commuters, parents,

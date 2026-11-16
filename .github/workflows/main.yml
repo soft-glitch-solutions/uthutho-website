@@ -1,9 +1,11 @@
+
 name: Deploy via FTP
 
 on:
   push:
     branches:
-      - main  # Deploy when pushing to the main branch
+      - main
+      - demo
 
 jobs:
   deploy:
@@ -11,12 +13,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'  # Updated from 16 to 20 to match required engines
+          node-version: '20'
 
       - name: Install dependencies
         run: npm install
@@ -24,7 +26,9 @@ jobs:
       - name: Build the app
         run: npm run build
 
-      - name: Deploy to cPanel via FTP
+      # Production deployment
+      - name: Deploy to Production
+        if: github.ref == 'refs/heads/main'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -32,6 +36,20 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
           port: ${{ secrets.FTP_PORT }}
-          local-dir: dist/  # This is your build directory
-          server-dir: public_html/  # Change this if needed
-          cleanup: true  # Remove old files before uploading
+          local-dir: dist/
+          server-dir: public_html/
+          log-level: verbose
+
+      # Demo deployment
+      - name: Deploy to Demo
+        if: github.ref == 'refs/heads/demo'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          port: ${{ secrets.FTP_PORT }}
+          local-dir: dist/
+          server-dir: demo.uthutho.co.za/
+          log-level: verbose

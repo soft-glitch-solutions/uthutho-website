@@ -3,6 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { useMediaQuery } from '@/hooks/use-media-query';
 
+const TEAL = '#1ea2b1';
+
 const Navbar: React.FC = () => {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [isOpen, setIsOpen] = useState(false);
@@ -21,9 +23,6 @@ const Navbar: React.FC = () => {
     { label: 'Contact', to: '/contact' },
   ];
 
-  /* ------------------------------------------------------------
-     Scroll listener for navbar backdrop
-     ------------------------------------------------------------ */
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -33,34 +32,22 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  /* ------------------------------------------------------------
-     THE FIX — scroll to top on route change.
-     Runs AFTER the browser paints the new page, and blurs
-     any focused link so the browser doesn't auto-scroll to it.
-     ------------------------------------------------------------ */
   useEffect(() => {
     const pathname = location.pathname;
-
-    // Skip the very first mount
     if (isFirstRender.current) {
       isFirstRender.current = false;
       prevPathRef.current = pathname;
       return;
     }
-
-    // Only act when the pathname actually changed
     if (prevPathRef.current === pathname) return;
     prevPathRef.current = pathname;
 
-    // Kill focus so browser doesn't scroll to the (now unmounted) link
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
 
-    // Hash target — scroll to element if it exists
     if (location.hash) {
       const id = location.hash.replace('#', '');
-      // Defer so the destination page has rendered
       const t = window.setTimeout(() => {
         const el = document.getElementById(id);
         if (el) {
@@ -72,9 +59,7 @@ const Navbar: React.FC = () => {
       return () => window.clearTimeout(t);
     }
 
-    // Plain route change — defer the scroll until after paint
     const raf = requestAnimationFrame(() => {
-      // Second tick lets layout settle on slow mounts
       window.setTimeout(() => {
         window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       }, 0);
@@ -82,16 +67,10 @@ const Navbar: React.FC = () => {
     return () => cancelAnimationFrame(raf);
   }, [location.pathname, location.hash]);
 
-  /* ------------------------------------------------------------
-     Close mobile menu on route change
-     ------------------------------------------------------------ */
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname]);
 
-  /* ------------------------------------------------------------
-     Lock body scroll while mobile menu is open
-     ------------------------------------------------------------ */
   useEffect(() => {
     if (isOpen) {
       const original = document.body.style.overflow;
@@ -102,23 +81,13 @@ const Navbar: React.FC = () => {
     }
   }, [isOpen]);
 
-  /* ------------------------------------------------------------
-     Auto-close mobile menu when we cross into desktop
-     ------------------------------------------------------------ */
   useEffect(() => {
     if (!isMobile && isOpen) setIsOpen(false);
   }, [isMobile, isOpen]);
 
-  /* ------------------------------------------------------------
-     Click handler — blurs the link AND scrolls immediately
-     as a fallback. Whatever timing the effect misses,
-     this catches it.
-     ------------------------------------------------------------ */
   const handleNavClick = (e: React.MouseEvent<HTMLElement>) => {
-    // Blur the clicked link so the browser can't scroll-to-focus it
     (e.currentTarget as HTMLElement).blur();
     setIsOpen(false);
-    // Immediate reset — runs before route change completes
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   };
 
@@ -145,12 +114,16 @@ const Navbar: React.FC = () => {
             }}
             className="flex shrink-0 items-center gap-2"
           >
+            {/* Original Image Logo Restored */}
             <img
               src="/lovable-uploads/e9056cae-b62d-4515-aae1-ac0e16261d24.png"
-              alt="Uthutho Logo"
+              alt="Uthutho Logo Icon"
               className="h-8 w-auto"
             />
-            <span className="text-xl font-bold text-brand-green">Uthutho</span>
+            {/* Updated Brand Text with Teal Dot */}
+            <span className="text-xl font-extrabold tracking-tight text-foreground font-league-spartan flex items-center">
+              Uthutho<span style={{ color: TEAL }}>.</span>
+            </span>
           </Link>
 
           {!isMobile && (
@@ -183,7 +156,8 @@ const Navbar: React.FC = () => {
                 href="https://www.mobile.uthutho.co.za/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full bg-brand-green px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-green/80"
+                className="rounded-full px-5 py-2.5 text-sm font-bold text-white transition-all hover:scale-105 shadow-[0_0_15px_rgba(30,162,177,0.3)]"
+                style={{ backgroundColor: TEAL }}
               >
                 Check My Route
               </a>
@@ -210,7 +184,8 @@ const Navbar: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setIsOpen(false)}
-              className="mt-4 rounded-full bg-brand-green px-6 py-3 text-center text-lg font-semibold text-white transition-colors hover:bg-brand-green/80"
+              className="mt-4 rounded-full px-6 py-3 text-center text-lg font-bold text-white transition-colors hover:opacity-90"
+              style={{ backgroundColor: TEAL }}
             >
               Check My Route
             </a>
