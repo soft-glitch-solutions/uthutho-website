@@ -232,153 +232,146 @@ const SceneHeader: React.FC<{
 };
 
 /* ============================================================
-   HERO — League Spartan font & Uthutho. Logo
+   HERO
    ============================================================ */
-   const HeroSection: React.FC = () => {
-    const [actionIndex, setActionIndex] = useState(0);
-    const actions = ['the taxi.', 'the bus.', 'the train.'];
-  
-    useEffect(() => {
-      const interval = setInterval(() => {
-        setActionIndex((prev) => (prev + 1) % actions.length);
-      }, 2600);
-      return () => clearInterval(interval);
-    }, [actions.length]);
-  
-    return (
-      <section
-        id="home"
-        className="relative min-h-screen w-full overflow-hidden bg-[#070707] flex items-center pt-20"
-      >
-        <div className="absolute inset-0 z-0">
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-30"
-            style={{ backgroundImage: "url('/lovable-uploads/header.jpg')" }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#070707] via-[#070707]/90 to-transparent" />
-        </div>
-  
-        <div className="container mx-auto px-6 sm:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between h-full py-12 md:py-0">
-  
-          <div className="w-full md:w-1/2 flex flex-col items-start pt-12 md:pt-0">
-  
-            {/* Brand Logo + Headline */}
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[6.5rem] font-extrabold tracking-tighter text-white leading-[0.92] mb-6 font-league-spartan">
-              <span className="block mb-2 sm:mb-4">
-                Uthutho<span style={{ color: TEAL }}>.</span>
-              </span>
-              <span className="block">
-                Never miss
-              </span>
-              <div className="relative h-[1.15em] w-full overflow-hidden">
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={actions[actionIndex]}
-                    initial={{ y: 40, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: -40, opacity: 0 }}
-                    transition={{ duration: 0.4, ease: ONE_UI_EASE }}
-                    className="absolute left-0 origin-bottom"
-                    style={{ color: TEAL }}
-                  >
-                    {actions[actionIndex]}
-                  </motion.span>
-                </AnimatePresence>
-              </div>
-              <div className="h-2 sm:h-3 w-1/2 mt-2 rounded-full" style={{ backgroundColor: TEAL }} />
-            </h1>
-  
-            <p className="text-base sm:text-lg text-white/70 mb-10 max-w-md leading-relaxed font-medium">
-              See your ride coming. Join the commute.
-            </p>
-  
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8">
-              <a
-                href="https://www.mobile.uthutho.co.za/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex items-center justify-center gap-3 rounded-full px-8 py-4 text-lg font-bold text-white transition-all hover:scale-105 shadow-[0_0_20px_rgba(30,162,177,0.4)]"
-                style={{ backgroundColor: TEAL }}
-              >
-                Start commuting
-                <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
-              </a>
-  
-              <a
-                href="#partners"
-                className="group flex items-center gap-2 text-sm font-semibold text-white/70 hover:text-white transition-colors"
-              >
-                <span className="h-[1px] w-8 bg-white/30 group-hover:bg-white transition-colors" />
-                Partner with us
-              </a>
+const HeroSection: React.FC = () => {
+  const [actionIndex, setActionIndex] = useState(0);
+  const actions = ['the taxi.', 'the bus.', 'the train.'];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActionIndex((prev) => (prev + 1) % actions.length);
+    }, 2600);
+    return () => clearInterval(interval);
+  }, [actions.length]);
+
+  return (
+    <section
+      id="home"
+      className="relative min-h-screen w-full overflow-hidden bg-[#070707] flex items-center pt-20"
+    >
+      <div className="absolute inset-0 z-0">
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-30"
+          style={{ backgroundImage: "url('/lovable-uploads/header.jpg')" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#070707] via-[#070707]/90 to-transparent" />
+      </div>
+
+      <div className="container mx-auto px-6 sm:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between h-full py-12 md:py-0">
+        <div className="w-full md:w-1/2 flex flex-col items-start pt-12 md:pt-0">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[6.5rem] font-extrabold tracking-tighter text-white leading-[0.92] mb-6 font-league-spartan">
+            <span className="block mb-2 sm:mb-4">
+              Uthutho<span style={{ color: TEAL }}>.</span>
+            </span>
+            <span className="block">Never miss</span>
+            <div className="relative h-[1.15em] w-full overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={actions[actionIndex]}
+                  initial={{ y: 40, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -40, opacity: 0 }}
+                  transition={{ duration: 0.4, ease: ONE_UI_EASE }}
+                  className="absolute left-0 origin-bottom"
+                  style={{ color: TEAL }}
+                >
+                  {actions[actionIndex]}
+                </motion.span>
+              </AnimatePresence>
             </div>
-  
-            <div className="flex flex-wrap items-center gap-3">
-              <a
-                href="https://play.google.com/store/apps/details?id=com.softglitch.uthutho&hl=en_ZA"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-opacity hover:opacity-80"
-              >
-                <img
-                  src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQobhWPz0ruWVxG5fiJVRf3ctDkP-Yym8XSCY4VNXTXW1sOz0Z6"
-                  alt="Get it on Google Play"
-                  className="h-12"
-                />
-              </a>
-              <a
-                href="https://appgallery.huawei.com/app/C116453879"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-opacity hover:opacity-80"
-              >
-                <img
-                  src="https://firstimpact.co.za/wp-content/uploads/2024/02/huawei-Badge-Black-huawei-app-gallery-1-1024x307.png"
-                  alt="Available on Huawei AppGallery"
-                  className="h-12"
-                />
-              </a>
-              <a
-                href="https://www.mobile.uthutho.co.za/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-opacity hover:opacity-80"
-              >
-                <img
-                  src="https://appassets.mvtdev.com/index/public-transit-resources/img/store-buttons/web_app-badge_en.webp"
-                  alt="Web App"
-                  className="h-12"
-                />
-              </a>
-            </div>
+            <div className="h-2 sm:h-3 w-1/2 mt-2 rounded-full" style={{ backgroundColor: TEAL }} />
+          </h1>
+
+          <p className="text-base sm:text-lg text-white/70 mb-10 max-w-md leading-relaxed font-medium">
+            See your ride coming. Join the commute.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8">
+            <a
+              href="https://www.mobile.uthutho.co.za/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center justify-center gap-3 rounded-full px-8 py-4 text-lg font-bold text-white transition-all hover:scale-105 shadow-[0_0_20px_rgba(30,162,177,0.4)]"
+              style={{ backgroundColor: TEAL }}
+            >
+              Start commuting
+              <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
+            </a>
+
+            <a
+              href="#partners"
+              className="group flex items-center gap-2 text-sm font-semibold text-white/70 hover:text-white transition-colors"
+            >
+              <span className="h-[1px] w-8 bg-white/30 group-hover:bg-white transition-colors" />
+              Partner with us
+            </a>
           </div>
-  
-          <div className="w-full md:w-1/2 mt-16 md:mt-0 flex justify-center md:justify-end">
-            <div className="relative w-[280px] sm:w-[320px] h-[560px] sm:h-[640px]">
-              <div
-                className="absolute inset-0 opacity-20 blur-[100px] rounded-full"
-                style={{ backgroundColor: TEAL }}
+
+          <div className="flex flex-wrap items-center gap-3">
+            <a
+              href="https://play.google.com/store/apps/details?id=com.softglitch.uthutho&hl=en_ZA"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-opacity hover:opacity-80"
+            >
+              <img
+                src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQobhWPz0ruWVxG5fiJVRf3ctDkP-Yym8XSCY4VNXTXW1sOz0Z6"
+                alt="Get it on Google Play"
+                className="h-12"
               />
-  
-              <div className="relative z-10 bg-black/80 rounded-[40px] p-3 shadow-2xl border border-white/10 backdrop-blur-md">
-                <div className="relative overflow-hidden rounded-[32px] h-[530px] sm:h-[610px] bg-black">
-                  <iframe
-                    className="w-full h-full absolute top-0 left-0 scale-[1.02]"
-                    src="https://www.youtube.com/embed/AFaaiVxz0LU?autoplay=1&mute=1&loop=1&playlist=AFaaiVxz0LU&controls=0&showinfo=0&rel=0&playsinline=1&modestbranding=1"
-                    title="Uthutho App Showcase"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </div>
+            </a>
+            <a
+              href="https://appgallery.huawei.com/app/C116453879"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-opacity hover:opacity-80"
+            >
+              <img
+                src="https://firstimpact.co.za/wp-content/uploads/2024/02/huawei-Badge-Black-huawei-app-gallery-1-1024x307.png"
+                alt="Available on Huawei AppGallery"
+                className="h-12"
+              />
+            </a>
+            <a
+              href="https://www.mobile.uthutho.co.za/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-opacity hover:opacity-80"
+            >
+              <img
+                src="https://appassets.mvtdev.com/index/public-transit-resources/img/store-buttons/web_app-badge_en.webp"
+                alt="Web App"
+                className="h-12"
+              />
+            </a>
+          </div>
+        </div>
+
+        <div className="w-full md:w-1/2 mt-16 md:mt-0 flex justify-center md:justify-end">
+          <div className="relative w-[280px] sm:w-[320px] h-[560px] sm:h-[640px]">
+            <div
+              className="absolute inset-0 opacity-20 blur-[100px] rounded-full"
+              style={{ backgroundColor: TEAL }}
+            />
+            <div className="relative z-10 bg-black/80 rounded-[40px] p-3 shadow-2xl border border-white/10 backdrop-blur-md">
+              <div className="relative overflow-hidden rounded-[32px] h-[530px] sm:h-[610px] bg-black">
+                <iframe
+                  className="w-full h-full absolute top-0 left-0 scale-[1.02]"
+                  src="https://www.youtube.com/embed/AFaaiVxz0LU?autoplay=1&mute=1&loop=1&playlist=AFaaiVxz0LU&controls=0&showinfo=0&rel=0&playsinline=1&modestbranding=1"
+                  title="Uthutho App Showcase"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
               </div>
             </div>
           </div>
-  
         </div>
-      </section>
-    );
-  };
+      </div>
+    </section>
+  );
+};
 
 const AS_SEEN_ON = [
   'Red Bull',
@@ -574,7 +567,6 @@ const StorySection: React.FC = () => {
           </div>
         </motion.div>
 
-
         <motion.div
           initial={prefersReduced ? false : { opacity: 0, y: 16 }}
           whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
@@ -653,7 +645,9 @@ const ProblemSection: React.FC = () => {
   return (
     <section className="relative bg-background">
       <div ref={containerRef} className="relative">
-        <div className="sticky top-0 h-screen flex items-center justify-center pointer-events-none z-10">
+        
+        {/* FIXED: Sticky container only activated on md screens and up */}
+        <div className="md:sticky md:top-0 md:h-screen flex items-center justify-center pointer-events-none z-10 py-16 md:py-0">
           <motion.div
             style={
               prefersReduced
@@ -668,7 +662,8 @@ const ProblemSection: React.FC = () => {
           >
             <motion.p
               initial={prefersReduced ? false : { opacity: 0, y: 20 }}
-              animate={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+              whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+              viewport={viewportOnce}
               transition={{ ...SOFT_SPRING, delay: 0.2 }}
               className="text-[11px] font-bold uppercase tracking-[0.25em] mb-4"
               style={{ color: TEAL }}
@@ -678,7 +673,8 @@ const ProblemSection: React.FC = () => {
 
             <motion.h2
               initial={prefersReduced ? false : { opacity: 0, y: 30 }}
-              animate={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+              whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+              viewport={viewportOnce}
               transition={{ ...SOFT_SPRING, delay: 0.35 }}
               className="font-display text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground leading-[1.05]"
             >
@@ -691,7 +687,8 @@ const ProblemSection: React.FC = () => {
                 <motion.span
                   aria-hidden
                   initial={prefersReduced ? false : { scaleX: 0 }}
-                  animate={prefersReduced ? undefined : { scaleX: 1 }}
+                  whileInView={prefersReduced ? undefined : { scaleX: 1 }}
+                  viewport={viewportOnce}
                   transition={{ ...SOFT_SPRING, delay: 0.6 }}
                   className="absolute -bottom-2 left-0 right-0 h-[8px] rounded-full origin-left"
                   style={{ backgroundColor: TEAL }}
@@ -701,7 +698,8 @@ const ProblemSection: React.FC = () => {
 
             <motion.p
               initial={prefersReduced ? false : { opacity: 0, y: 20 }}
-              animate={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+              whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+              viewport={viewportOnce}
               transition={{ ...SOFT_SPRING, delay: 0.5 }}
               className="mt-6 text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed"
             >
@@ -721,7 +719,8 @@ const ProblemSection: React.FC = () => {
           </motion.div>
         </div>
 
-        <div className="relative z-20 -mt-[100vh] pt-[100vh]">
+        {/* FIXED: Overlay behavior only activated on md screens and up */}
+        <div className="relative z-20 md:-mt-[100vh] md:pt-[100vh]">
           <div className="mx-auto w-full max-w-6xl px-4 pb-16 sm:px-6">
             <motion.div
               initial={prefersReduced ? false : 'hidden'}
@@ -1249,7 +1248,9 @@ const ForYouAppleSection: React.FC = () => {
   return (
     <section id="for-you" className="relative bg-background">
       <div ref={containerRef} className="relative">
-        <div className="sticky top-0 h-screen flex items-center justify-center pointer-events-none z-10">
+        
+        {/* FIXED: Sticky container only activated on md screens and up */}
+        <div className="md:sticky md:top-0 md:h-screen flex items-center justify-center pointer-events-none z-10 py-16 md:py-0">
           <motion.div
             style={
               prefersReduced
@@ -1264,7 +1265,8 @@ const ForYouAppleSection: React.FC = () => {
           >
             <motion.p
               initial={prefersReduced ? false : { opacity: 0, y: 20 }}
-              animate={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+              whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+              viewport={viewportOnce}
               transition={{ ...SOFT_SPRING, delay: 0.2 }}
               className="text-[11px] font-bold uppercase tracking-[0.25em] mb-4"
               style={{ color: TEAL }}
@@ -1273,7 +1275,8 @@ const ForYouAppleSection: React.FC = () => {
             </motion.p>
             <motion.h2
               initial={prefersReduced ? false : { opacity: 0, y: 30 }}
-              animate={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+              whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+              viewport={viewportOnce}
               transition={{ ...SOFT_SPRING, delay: 0.35 }}
               className="font-display text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground leading-[1.05]"
             >
@@ -1286,7 +1289,8 @@ const ForYouAppleSection: React.FC = () => {
                 <motion.span
                   aria-hidden
                   initial={prefersReduced ? false : { scaleX: 0 }}
-                  animate={prefersReduced ? undefined : { scaleX: 1 }}
+                  whileInView={prefersReduced ? undefined : { scaleX: 1 }}
+                  viewport={viewportOnce}
                   transition={{ ...SOFT_SPRING, delay: 0.6 }}
                   className="absolute -bottom-2 left-0 right-0 h-[8px] rounded-full origin-left"
                   style={{ backgroundColor: TEAL }}
@@ -1295,7 +1299,8 @@ const ForYouAppleSection: React.FC = () => {
             </motion.h2>
             <motion.p
               initial={prefersReduced ? false : { opacity: 0, y: 20 }}
-              animate={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+              whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+              viewport={viewportOnce}
               transition={{ ...SOFT_SPRING, delay: 0.5 }}
               className="mt-6 text-sm sm:text-lg text-muted-foreground max-w-xl mx-auto"
             >
@@ -1312,7 +1317,8 @@ const ForYouAppleSection: React.FC = () => {
           </motion.div>
         </div>
 
-        <div className="relative z-20 -mt-[100vh] pt-[100vh]">
+        {/* FIXED: Overlay behavior only activated on md screens and up */}
+        <div className="relative z-20 md:-mt-[100vh] md:pt-[100vh]">
           <div className="mx-auto w-full max-w-6xl px-4 pb-16 sm:px-6">
             <div className="grid gap-6 lg:grid-cols-2">
               {FOR_YOU.map((card, i) => (
@@ -1890,10 +1896,6 @@ const InTheWildSection: React.FC = () => {
             </motion.div>
           ))}
         </motion.div>
-
-
-
-
       </div>
     </section>
   );
