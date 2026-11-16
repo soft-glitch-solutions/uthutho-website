@@ -275,7 +275,7 @@ const PARTNERS: PartnerLogo[] = [
     shortName: 'NCIC',
     description:
       'The NCIC Gauteng Smart Mobility Cleantech Challenge supports digital solutions that make informal transport more efficient, greener, and data-driven.',
-    logoUrl: '',
+    logoUrl: 'https://stepapp.co.za/wp-content/uploads/2026/02/GAUTENG-Smart-Mobility-Cleantech-Challenge.jpg',
     accent: ORANGE,
     category: 'Award',
   },
