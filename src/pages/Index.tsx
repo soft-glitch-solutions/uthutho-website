@@ -1891,58 +1891,9 @@ const InTheWildSection: React.FC = () => {
           ))}
         </motion.div>
 
-        <motion.div
-          initial={prefersReduced ? false : { opacity: 0, y: 16 }}
-          whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
-          viewport={viewportOnce}
-          transition={ONE_UI_TRANSITION}
-          className="mb-4 flex items-center gap-2"
-        >
-          <Play className="size-4" style={{ color: TEAL }} />
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-            The product in motion
-          </p>
-        </motion.div>
 
-        <motion.div
-          initial={prefersReduced ? false : 'hidden'}
-          whileInView={prefersReduced ? undefined : 'visible'}
-          viewport={viewportOnce}
-          variants={stagger(0.07)}
-          className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4"
-        >
-          {IN_THE_WILD_GIFS.map((gif, i) => (
-            <motion.div
-              key={gif.src}
-              variants={{
-                hidden: { opacity: 0, y: 20, scale: 0.97 },
-                visible: {
-                  opacity: 1,
-                  y: 0,
-                  scale: 1,
-                  transition: { ...ONE_UI_TRANSITION, delay: i * 0.07 },
-                },
-              }}
-            >
-              <MagneticCard className="rounded-[1.75rem] bg-card border border-border/60 shadow-xl p-2 h-full">
-                <div className="relative rounded-[1.25rem] overflow-hidden bg-black">
-                  <img
-                    src={gif.src}
-                    alt={gif.label}
-                    className="w-full h-40 sm:h-44 object-cover"
-                    loading="lazy"
-                  />
-                  <div className="absolute top-2 left-2 bg-white/90 rounded-full px-2 py-0.5 text-[9px] font-bold text-black">
-                    {gif.label}
-                  </div>
-                </div>
-                <p className="px-2 py-3 text-xs font-semibold text-muted-foreground">
-                  {gif.desc}
-                </p>
-              </MagneticCard>
-            </motion.div>
-          ))}
-        </motion.div>
+
+
       </div>
     </section>
   );
@@ -2059,7 +2010,6 @@ const Home: React.FC = () => {
         <JourneyDrive />
         <ForYouAppleSection />
         <AwardsSection />
-        <TeamSection />
         <MissionVisionSection />
         <CtaSection />
       </main>
