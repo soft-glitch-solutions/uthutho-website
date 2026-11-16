@@ -3,6 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { useMediaQuery } from '@/hooks/use-media-query';
 
+const TEAL = '#1ea2b1';
+
 const Navbar: React.FC = () => {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [isOpen, setIsOpen] = useState(false);
@@ -35,8 +37,6 @@ const Navbar: React.FC = () => {
 
   /* ------------------------------------------------------------
      THE FIX — scroll to top on route change.
-     Runs AFTER the browser paints the new page, and blurs
-     any focused link so the browser doesn't auto-scroll to it.
      ------------------------------------------------------------ */
   useEffect(() => {
     const pathname = location.pathname;
@@ -111,14 +111,10 @@ const Navbar: React.FC = () => {
 
   /* ------------------------------------------------------------
      Click handler — blurs the link AND scrolls immediately
-     as a fallback. Whatever timing the effect misses,
-     this catches it.
      ------------------------------------------------------------ */
   const handleNavClick = (e: React.MouseEvent<HTMLElement>) => {
-    // Blur the clicked link so the browser can't scroll-to-focus it
     (e.currentTarget as HTMLElement).blur();
     setIsOpen(false);
-    // Immediate reset — runs before route change completes
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   };
 
@@ -145,12 +141,10 @@ const Navbar: React.FC = () => {
             }}
             className="flex shrink-0 items-center gap-2"
           >
-            <img
-              src="/lovable-uploads/e9056cae-b62d-4515-aae1-ac0e16261d24.png"
-              alt="Uthutho Logo"
-              className="h-8 w-auto"
-            />
-            <span className="text-xl font-bold text-brand-green">Uthutho</span>
+            {/* Updated Brand Text with Teal Dot and League Spartan Font */}
+            <span className="text-2xl font-extrabold tracking-tight text-foreground font-league-spartan flex items-center">
+              Uthutho<span style={{ color: TEAL }}>.</span>
+            </span>
           </Link>
 
           {!isMobile && (
@@ -183,7 +177,8 @@ const Navbar: React.FC = () => {
                 href="https://www.mobile.uthutho.co.za/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full bg-brand-green px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-green/80"
+                className="rounded-full px-5 py-2.5 text-sm font-bold text-white transition-all hover:scale-105 shadow-[0_0_15px_rgba(30,162,177,0.3)]"
+                style={{ backgroundColor: TEAL }}
               >
                 Check My Route
               </a>
@@ -210,7 +205,8 @@ const Navbar: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setIsOpen(false)}
-              className="mt-4 rounded-full bg-brand-green px-6 py-3 text-center text-lg font-semibold text-white transition-colors hover:bg-brand-green/80"
+              className="mt-4 rounded-full px-6 py-3 text-center text-lg font-bold text-white transition-colors hover:opacity-90"
+              style={{ backgroundColor: TEAL }}
             >
               Check My Route
             </a>
